@@ -1,6 +1,8 @@
 OPF Project Healthcheck
 =======================
 
+About
+-----
 Java project that uses the GitHub API to gather information about OPF GitHub projects
 and generate a static web site that:
 
@@ -17,6 +19,5 @@ A new project so no working code yet.
 
 ToDo
 ----
-
 * First cut that generates the home page summary
 * Instructions to generate as a local file and browse in this README
