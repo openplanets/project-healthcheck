@@ -17,6 +17,7 @@
 
 # Eclipse Files #
 #################
+.externalToolBuilders
 .settings
 .classpath
 .project
