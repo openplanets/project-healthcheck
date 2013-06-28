@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>${user.name} GitHub Project Health Check</title>
+<meta name="description" content="OPF Project Healthcheck">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+<!--[if IE 7]>
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome-ie7.css" rel="stylesheet">
+	<![endif]-->
+<link href="css/opf.css" rel="stylesheet" media="screen">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+        <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+<body>
+	<div id="wrap">
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse"
+						data-target=".nav-collapse">
+						<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="brand" href="${user.htmlUrl}" title="${user.name}"><img
+						id="logo" class="img-rounded" src="${user.avatarUrl}"
+						alt="${user.name} Site" /> OPF Projects</a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							<li class="active"><a href="#">Home</a></li>
+							<li><a href="http://www.openplanetsfoundation.org/about">About</a></li>
+							<li><a href="http://www.openplanetsfoundation.org/contact">Contact</a></li>
+							<li><a
+								href="http://www.openplanetsfoundation.org/members/joining-opf">Join
+									Us</a></li>
+						</ul>
+					</div>
+					<!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="span4 stats">
+					<ul>
+						<li class="pull-left"><a href="">${user.publicRepos}
+								repos</a></li>
+					</ul>
+				</div>
+				<div class="span5 filter">
+					<ul>
+						<li class="pull-right"><a rel="scape" href="#">SCAPE</a></li>
+						<li class="pull-right"><a rel="new" href="#">New</a></li>
+						<li class="pull-right"><a class="selected" rel="all" href="#">All</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="row">
+				<div class="span9">
+					<ul id="repos"></ul>
+				</div>
+				<div id="side" class="span3 offset9" data-spy="affix">
+					<strong>Key</strong>
+					<dl id="key">
+						<dt><span class="label label-info">Info:</span></dt>
+						<dd>FYI.</dd>
+						<dt><span class="label label-success">OK:</span></dt>
+						<dd>All Good.</dd>
+						<dt><span class="label label-warning">Warn:</span></dt>
+						<dd>Could do better.</dd>
+						<dt><span class="label label-important">Fail:</span></dt>
+						<dd>Please fix.</dd>
+						<dt><i class="icon-github-alt"></i> Project Name</dt>
+						<dd>Project name & GitHub link.</dd>
+						<dt><i class="icon-file-alt"></i> Description</dt>
+						<dd>GitHub project description or warning if missing.</dd>
+						<dt><i class="icon-calendar"></i> <em>date</em></dt>
+						<dd>Date project last updated.</dd>
+						<dt><i class="icon-laptop"></i> <em>language</em></dt>
+						<dd>Project language.</dd>
+						<dt><i class="icon-tasks"></i> <em>n</em></dt>
+						<dd>Number of open issues.</dd>
+						<dt><i class="icon-book"></i> Read Me</dt>
+						<dd>Link to project ReadMe file (if present).</dd>
+						<dt><i class="icon-legal"></i> License</dt>
+						<dd>Link to project license file (if present).</dd>
+						<dt><i class="icon-info-sign"></i> Metadata</dt>
+						<dd>Link to project Metadata file (if present).</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="push"></div>
+	<div id="footer">
+		<div class="container">
+			<p class="muted credit">
+				<a rel="license"
+					href="http://creativecommons.org/licenses/by/3.0/deed.en_GB"><img
+					alt="Creative Commons Licence" style="border-width: 0"
+					src="http://i.creativecommons.org/l/by/3.0/88x31.png" /></a><span
+					xmlns:dct="http://purl.org/dc/terms/" property="dct:title">
+					OPF Project Healthcheck</span> by <a
+					xmlns:cc="http://creativecommons.org/ns#"
+					href="http://openplanetsfoundation.org"
+					property="cc:attributionName" rel="cc:attributionURL">Open
+					Planets Foundation</a> is licensed under a <a rel="license"
+					href="http://creativecommons.org/licenses/by/3.0/deed.en_GB">Creative
+					Commons Attribution 3.0 Unported License</a>.
+			</p>
+		</div>
+	</div>
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+	<script src="js/bootstraputils.js"></script>
+	<script src="js/healthcheck.js"></script>
+	<script type="text/javascript">
+  	    $(document).ready(function() {
+  		    projectList.init(${userJson}, [${projectsJson}]);
+  	    });
+    </script>
+	<script type="text/javascript">
+	
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-19484201-4']);
+	  _gaq.push(['_setDomainName', 'projects.opf-labs.org']);
+	  _gaq.push(['_trackPageview']);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	
+	</script>
+</body>
+</html>
