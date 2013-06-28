@@ -19,5 +19,5 @@ A new project so no working code yet.
 
 ToDo
 ----
-* First cut that generates the home page summary
-* Instructions to generate as a local file and browse in this README
+- [ ] First cut that generates the home page summary
+- [ ] Instructions to generate as a local file and browse in this README
