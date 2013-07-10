@@ -8,9 +8,8 @@ import org.eclipse.egit.github.core.Repository;
 import com.google.common.base.Preconditions;
 
 /**
- * TODO JavaDoc for Indicators.</p>
- * TODO Tests for Indicators.</p>
- * TODO Implementation for Indicators.</p>
+ * Class to hold immutable GitHub project details.  This class is simply a
+ * property bean, the hard work is currently done in the CLI class.
  * 
  * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
  *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
@@ -56,9 +55,8 @@ public final class GitHubProject {
 	}
 
 	/**
-	 * TODO JavaDoc for Indicators.</p>
-	 * TODO Tests for Indicators.</p>
-	 * TODO Implementation for Indicators.</p>
+	 * Immutable wrapper for project indicator information.
+	 * String URLs for the project readme, license and OPF Metadata.
 	 * 
 	 * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
 	 *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
@@ -85,9 +83,7 @@ public final class GitHubProject {
 	}
 
 	/**
-	 * TODO JavaDoc for CiInfo.</p>
-	 * TODO Tests for CiInfo.</p>
-	 * TODO Implementation for CiInfo.</p>
+	 * Immutable wrapper for Travis CI information, package protected variables.
 	 * 
 	 * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
 	 *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
