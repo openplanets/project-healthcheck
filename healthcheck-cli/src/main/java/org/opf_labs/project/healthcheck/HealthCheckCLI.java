@@ -113,11 +113,14 @@ public final class HealthCheckCLI {
 	/**
 	 * Main CLI entry point, process command line arguments
 	 * 
-	 * @param args
+	 * @param args the command line args passed at invocation
 	 */
+	@SuppressWarnings("resource")
 	public final static void main(final String[] args) {
 		// Create a command line parser
 		CommandLineParser cmdParser = new GnuParser();
+		// And a sysout writer
+		Writer outWriter = new OutputStreamWriter(System.out);
 		try {
 			// Parse the command line arguments
 			CommandLine cmd = cmdParser.parse(OPTIONS, args);
@@ -131,13 +134,19 @@ public final class HealthCheckCLI {
 			// Now the organisation name
 			User user = getUser(ghClient, getOrgName(cmd));
 			
+			// Get a file writer if requested
+			if (!cmd.hasOption(FILE_OPT)) {
+				outWriter.close();
+				outWriter = getFileOutputWriter(cmd.getOptionValue(FILE_OPT));
+			}
+
 			List<GitHubProject> projects = createProjectList(ghClient, user.getLogin());
-			Writer outWriter = getOutputWriter(cmd);
 			if (cmd.hasOption(HTML_OPT)) {
 				outputHtml(user, projects, outWriter);
 			} else {
 				outputPlainText(user, projects, outWriter);
 			}
+			outWriter.close();
 		} catch (ParseException e) {
 			// Ooops, parsing commands went wrong
 			e.printStackTrace();
@@ -149,6 +158,15 @@ public final class HealthCheckCLI {
 			System.err.println("Failed to retrieve organisation from GitHub.  Reason: "
 					+ e.getMessage());
 			System.exit(1);
+		} finally {
+			try {
+				if (outWriter != null) outWriter.close();
+			} catch (IOException excep) {
+				/**
+				 * Empty catch block, we can ignore the close error
+				 */
+				excep.printStackTrace();
+			}
 		}
 	}
 
@@ -184,11 +202,8 @@ public final class HealthCheckCLI {
 		return userService.getUser(orgName);
 	}
 	
-	private final static Writer getOutputWriter(final CommandLine cmd) throws IOException {
-		if (!cmd.hasOption(FILE_OPT))
-			return new OutputStreamWriter(System.out);
-		String outFilePath = cmd.getOptionValue(FILE_OPT);
-		File outFile = new File(outFilePath);
+	private final static Writer getFileOutputWriter(String filePath) throws IOException {
+		File outFile = new File(filePath);
 		if (!outFile.exists()) {
 			if (!outFile.createNewFile()) throw new IOException();
 		} else if (!outFile.isFile()) throw new IOException();
