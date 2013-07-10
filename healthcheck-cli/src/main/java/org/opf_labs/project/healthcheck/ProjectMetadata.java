@@ -3,10 +3,14 @@
  */
 package org.opf_labs.project.healthcheck;
 
+import java.io.IOException;
 import java.io.InputStream;
 
-import org.yaml.snakeyaml.Yaml;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Preconditions;
 
 /**
@@ -25,18 +29,29 @@ import com.google.common.base.Preconditions;
  * 
  *          Created 10 Jul 2013:12:58:11
  */
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 public final class ProjectMetadata {
-	final String name;
-	final String vendor;
+	private final static String UNKNOWN = "unknown";
+	/** The projects full name */
+	public final String name;
+	/** The projects vendor identifier, could be an individual, organisation, or project. */
+	public final String vendor;
+	//public final Maintainer maintainer;
 
-	private ProjectMetadata() {
-		throw new AssertionError("In ProjectMetadata no-arg constructor.");
+	ProjectMetadata() {
+		this(UNKNOWN, UNKNOWN);
 	}
 
 	private ProjectMetadata(final String name, final String vendor) {
+		Preconditions.checkNotNull(name, "name is null.");
+		Preconditions.checkNotNull(vendor, "vendor is null.");
+		Preconditions.checkArgument(!name.isEmpty(), "name.isEmpty() == true");
+		Preconditions.checkArgument(!vendor.isEmpty(),
+				"vendor.isEmpty() == true");
+		//Preconditions.checkNotNull(maintainer, "maintainer is null.");
 		this.name = name;
 		this.vendor = vendor;
+		//this.maintainer = maintainer;
 	}
 
 	/**
@@ -50,11 +65,6 @@ public final class ProjectMetadata {
 	 */
 	public static final ProjectMetadata getInstance(final String name,
 			final String vendor) {
-		Preconditions.checkNotNull(name, "name is null.");
-		Preconditions.checkNotNull(vendor, "vendor is null.");
-		Preconditions.checkArgument(!name.isEmpty(), "name.isEmpty() == true");
-		Preconditions.checkArgument(!vendor.isEmpty(),
-				"vendor.isEmpty() == true");
 		return new ProjectMetadata(name, vendor);
 	}
 
@@ -68,9 +78,20 @@ public final class ProjectMetadata {
 	 */
 	public static final ProjectMetadata getInstance(InputStream yamlStream) {
 		Preconditions.checkNotNull(yamlStream, "yamlStream is null");
-		Yaml yaml = new Yaml();
-		Object parsedYaml = yaml.load(yamlStream);
-		System.out.println(parsedYaml.getClass());
-		return null;
+		ProjectMetadata pmd = null;
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		try {
+			pmd = mapper.readValue(yamlStream, ProjectMetadata.class);
+		} catch (JsonParseException excep) {
+			// TODO Auto-generated catch block
+			excep.printStackTrace();
+		} catch (JsonMappingException excep) {
+			// TODO Auto-generated catch block
+			excep.printStackTrace();
+		} catch (IOException excep) {
+			// TODO Auto-generated catch block
+			excep.printStackTrace();
+		}
+		return pmd;
 	}
 }
