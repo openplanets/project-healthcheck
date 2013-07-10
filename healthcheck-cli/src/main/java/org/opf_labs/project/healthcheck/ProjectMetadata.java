@@ -36,7 +36,6 @@ public final class ProjectMetadata {
 	public final String name;
 	/** The projects vendor identifier, could be an individual, organisation, or project. */
 	public final String vendor;
-	//public final Maintainer maintainer;
 
 	ProjectMetadata() {
 		this(UNKNOWN, UNKNOWN);
@@ -48,10 +47,8 @@ public final class ProjectMetadata {
 		Preconditions.checkArgument(!name.isEmpty(), "name.isEmpty() == true");
 		Preconditions.checkArgument(!vendor.isEmpty(),
 				"vendor.isEmpty() == true");
-		//Preconditions.checkNotNull(maintainer, "maintainer is null.");
 		this.name = name;
 		this.vendor = vendor;
-		//this.maintainer = maintainer;
 	}
 
 	/**
