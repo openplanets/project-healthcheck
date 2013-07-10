@@ -8,29 +8,32 @@ import org.eclipse.egit.github.core.Repository;
 import com.google.common.base.Preconditions;
 
 /**
- * Class to hold immutable GitHub project details.  This class is simply a
+ * Class to hold immutable GitHub project details. This class is simply a
  * property bean, the hard work is currently done in the CLI class.
  * 
- * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
- *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
+ * @author <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
+ *         <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
  * @version 0.1
  * 
- * Created 10 Jul 2013:10:44:23
+ *          Created 10 Jul 2013:10:44:23
  */
 public final class GitHubProject {
 	final Repository repo;
+	final ProjectMetadata opfMetadata;
 	final Indicators indicators;
 	final CiInfo ci;
 
 	private GitHubProject() {
-		throw new AssertionError();
+		throw new AssertionError("In GitHub Project no-arg constructor.");
 	}
 
-	private GitHubProject(final Repository repo, final Indicators indicators,
+	private GitHubProject(final Repository repo,
+			final ProjectMetadata metadata, final Indicators indicators,
 			CiInfo ci) {
 		this.repo = repo;
 		if (this.repo.getLanguage() == null)
 			this.repo.setLanguage("unknown");
+		this.opfMetadata = metadata;
 		this.indicators = indicators;
 		this.ci = ci;
 	}
@@ -40,6 +43,8 @@ public final class GitHubProject {
 	 * 
 	 * @param repo
 	 *            the Repository instance for the GitHubProject
+	 * @param metadata
+	 *            the parsed project OPF metadata file
 	 * @param indicators
 	 *            the project health indicator object
 	 * @param ci
@@ -47,22 +52,26 @@ public final class GitHubProject {
 	 * @return a new instance created from the pass parameters
 	 */
 	public final static GitHubProject newInstance(final Repository repo,
-			final Indicators indicators, CiInfo ci) {
+			final ProjectMetadata metadata, final Indicators indicators,
+			CiInfo ci) {
 		Preconditions.checkNotNull(repo, "repos == null");
 		Preconditions.checkNotNull(indicators, "indicators == null");
 		Preconditions.checkNotNull(ci, "ci == null");
-		return new GitHubProject(repo, indicators, ci);
+		Preconditions.checkNotNull(metadata, "metadata == null");
+		return new GitHubProject(repo, metadata, indicators, ci);
 	}
 
 	/**
-	 * Immutable wrapper for project indicator information.
-	 * String URLs for the project readme, license and OPF Metadata.
+	 * Immutable wrapper for project indicator information. String URLs for the
+	 * project readme, license and OPF Metadata.
 	 * 
-	 * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
-	 *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
+	 * @author <a href="mailto:carl@openplanetsfoundation.org">Carl
+	 *         Wilson</a>.</p> <a
+	 *         href="https://github.com/carlwilson">carlwilson AT
+	 *         github</a>.</p>
 	 * @version 0.1
 	 * 
-	 * Created 10 Jul 2013:10:44:23
+	 *          Created 10 Jul 2013:10:44:23
 	 */
 	public static final class Indicators {
 		final String readMeUrl;
@@ -85,11 +94,13 @@ public final class GitHubProject {
 	/**
 	 * Immutable wrapper for Travis CI information, package protected variables.
 	 * 
-	 * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
-	 *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
+	 * @author <a href="mailto:carl@openplanetsfoundation.org">Carl
+	 *         Wilson</a>.</p> <a
+	 *         href="https://github.com/carlwilson">carlwilson AT
+	 *         github</a>.</p>
 	 * @version 0.1
 	 * 
-	 * Created 10 Jul 2013:10:45:08
+	 *          Created 10 Jul 2013:10:45:08
 	 */
 	public static final class CiInfo {
 		final boolean hasTravis;
