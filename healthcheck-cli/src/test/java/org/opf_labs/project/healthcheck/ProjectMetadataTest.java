@@ -23,52 +23,52 @@ public class ProjectMetadataTest {
 
 	/**
 	 * Null name test for
-	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromValues(String, String)}
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testGetInstanceNullName() {
-		ProjectMetadata.getInstance(null, "vendor");
+		ProjectMetadata.fromValues(null, "vendor");
 	}
 
 	/**
 	 * Null vendor test for
-	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromValues(String, String)}
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testGetInstanceNullVendor() {
-		ProjectMetadata.getInstance("name", null);
+		ProjectMetadata.fromValues("name", null);
 	}
 
 	/**
 	 * Empty name test for
-	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromValues(String, String)}
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetInstanceEmptyName() {
-		ProjectMetadata.getInstance("", "vendor");
+		ProjectMetadata.fromValues("", "vendor");
 	}
 
 	/**
 	 * Empty vendor test for
-	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromValues(String, String)}
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetInstanceEmptyVendor() {
-		ProjectMetadata.getInstance("name", "");
+		ProjectMetadata.fromValues("name", "");
 	}
 
 	/**
 	 * Null name test for
-	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(InputStream)}
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromYamlStream(InputStream)}
 	 */
 	@Test(expected = NullPointerException.class)
 	public void testGetInstanceInputStreamNull() {
-		ProjectMetadata.getInstance(null);
+		ProjectMetadata.fromYamlStream(null);
 	}
 
 	/**
 	 * Test for
-	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(InputStream)}
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromYamlStream(InputStream)}
 	 * 
 	 * @throws URISyntaxException
 	 *             when the test resource can't be loaded.
@@ -79,9 +79,26 @@ public class ProjectMetadataTest {
 			IOException {
 		File testYaml = AllTests.getTestYamlFile();
 		InputStream fis = new FileInputStream(testYaml);
-		ProjectMetadata pmd = ProjectMetadata.getInstance(fis);
+		ProjectMetadata pmd = ProjectMetadata.fromYamlStream(fis);
 		assertEquals("OPF Project Healthcheck", pmd.name);
 		assertEquals("Open Planets Foundation", pmd.vendor);
+		fis.close();
+	}
+
+	/**
+	 * Test for
+	 * {@link org.opf_labs.project.healthcheck.ProjectMetadata#fromYamlStream(InputStream)}
+	 * 
+	 * @throws URISyntaxException
+	 *             when the test resource can't be loaded.
+	 * @throws IOException 
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetInstanceInputStreamIncomplete() throws URISyntaxException,
+			IOException {
+		File testYaml = AllTests.getTestIncompleteYamlFile();
+		InputStream fis = new FileInputStream(testYaml);
+		ProjectMetadata.fromYamlStream(fis);
 		fis.close();
 	}
 }

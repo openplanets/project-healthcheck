@@ -25,6 +25,8 @@ public class AllTests {
 	public final static String YAML_ROOT = TEST_ROOT + "/yaml";
 	/** Test YAML */
 	public final static String TEST_YAML = YAML_ROOT + "/test.yml";
+	/** Incomplete YAML */
+	public final static String INCOMPLETE_YAML = YAML_ROOT + "/incomplete.yml";
 
 	/**
 	 * @return the test OPF Metadata YAML file
@@ -33,6 +35,15 @@ public class AllTests {
 	 */
 	public final static File getTestYamlFile() throws URISyntaxException {
 		return getResourceAsFile(TEST_YAML);
+	}
+
+	/**
+	 * @return the test OPF Metadata YAML file
+	 * @throws URISyntaxException
+	 *             if the resource can't be opened
+	 */
+	public final static File getTestIncompleteYamlFile() throws URISyntaxException {
+		return getResourceAsFile(INCOMPLETE_YAML);
 	}
 
 	/**
