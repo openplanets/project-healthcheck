@@ -56,7 +56,12 @@ import freemarker.template.TemplateException;
  * Initial cut simply to get the GitHub API working from Java. Aim to output a
  * list of OPF organisation and project details to STDOUT for now.
  * 
- * @author Carl Wilson
+ * 
+ * @author  <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
+ *          <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
+ * @version 0.1
+ * 
+ * Created 10 Jul 2013:10:44:23
  */
 public final class HealthCheckCLI {
 	// String constants for info files
@@ -237,38 +242,6 @@ public final class HealthCheckCLI {
 			if (baseName.equalsIgnoreCase(LICENSE))	licenseUrl = repo.getHtmlUrl() + "/blob/master/" + treeEntry.getPath();
 			if (treeEntry.getPath().equalsIgnoreCase(OPF_YAML)) metadataUrl = repo.getHtmlUrl() + "/blob/master/" + treeEntry.getPath();
 		}
-//		String readMe;
-//		try {
-////			readMe = mdService.getHtml(
-////					new String(Base64.decode(repoService.getContents(
-////							repo, "README.md").getContent())), "gfm");
-//			readMe = new String(base64codec.decode(repoService.getContents(
-//							repo, "README.md").getContent()));
-//		} catch (RequestException excep) {
-//			// excep.printStackTrace();
-//			readMe = "NO README.md";
-//		}
-//		System.out.println(readMe);
-//		String license;
-//		try {
-//			license = new String(base64codec.decode(repoService.getContents(
-//							repo, "LICENSE").getContent()));
-//		} catch (RequestException excep) {
-//			// excep.printStackTrace();
-//			license = "NO LICENSE";
-//		}
-//		System.out.println(license);
-//		String opfYml;
-//		try {
-//			opfYml = new String(base64codec.decode(repoService.getContents(
-//							repo, ".opf.yml").getContent()));
-//		} catch (RequestException excep) {
-//			// excep.printStackTrace();
-//			opfYml = "NO YAML Metadata";
-//		}
-//		System.out.println(opfYml);
-//		System.out.println();
-//		//repoService.getContents(repo, "/");
 		return new Indicators(readMeUrl, licenseUrl, metadataUrl);
 	}
 	
