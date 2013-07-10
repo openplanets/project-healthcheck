@@ -2,6 +2,8 @@ package org.opf_labs.project.healthcheck;
 
 import static org.junit.Assert.*;
 
+import java.io.InputStream;
+
 import org.junit.Test;
 
 /**
@@ -15,14 +17,44 @@ import org.junit.Test;
  */
 public class ProjectMetadataTest {
 
-	@Test
+	/**
+	 * Null name test for {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 */
+	@Test(expected=NullPointerException.class)
 	public void testGetInstanceNullName() {
-		fail("Not yet implemented"); // TODO
+		ProjectMetadata.getInstance(null, "vendor");
 	}
 
-	@Test
-	public void testGetInstanceInputStream() {
-		fail("Not yet implemented"); // TODO
+	/**
+	 * Null vendor test for {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testGetInstanceNullVendor() {
+		ProjectMetadata.getInstance("name", null);
+	}
+
+	/**
+	 * Empty name test for {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetInstanceEmptyName() {
+		ProjectMetadata.getInstance("", "vendor");
+	}
+
+	/**
+	 * Empty vendor test for {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(String, String)}
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetInstanceEmptyVendor() {
+		ProjectMetadata.getInstance("name", "");
+	}
+
+	/**
+	 * Null name test for {@link org.opf_labs.project.healthcheck.ProjectMetadata#getInstance(InputStream)}
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testGetInstanceInputStreamNull() {
+		ProjectMetadata.getInstance(null);
 	}
 
 }
