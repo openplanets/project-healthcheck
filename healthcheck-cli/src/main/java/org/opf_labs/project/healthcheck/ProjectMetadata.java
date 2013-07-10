@@ -6,7 +6,9 @@ package org.opf_labs.project.healthcheck;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,21 +34,17 @@ import com.google.common.base.Preconditions;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public final class ProjectMetadata {
 	private final static String UNKNOWN = "unknown";
+	private final static ProjectMetadata DEFAULT_INSTANCE = new ProjectMetadata(UNKNOWN, UNKNOWN);
 	/** The projects full name */
 	public final String name;
 	/** The projects vendor identifier, could be an individual, organisation, or project. */
 	public final String vendor;
 
-	ProjectMetadata() {
-		this(UNKNOWN, UNKNOWN);
+	private ProjectMetadata() {
+		throw new AssertionError();
 	}
 
 	private ProjectMetadata(final String name, final String vendor) {
-		Preconditions.checkNotNull(name, "name is null.");
-		Preconditions.checkNotNull(vendor, "vendor is null.");
-		Preconditions.checkArgument(!name.isEmpty(), "name.isEmpty() == true");
-		Preconditions.checkArgument(!vendor.isEmpty(),
-				"vendor.isEmpty() == true");
 		this.name = name;
 		this.vendor = vendor;
 	}
@@ -60,11 +58,23 @@ public final class ProjectMetadata {
 	 *            the project vendor name, read from the metadata file.
 	 * @return a populated project metadata instance
 	 */
-	public static final ProjectMetadata getInstance(final String name,
-			final String vendor) {
+	@JsonCreator
+	public static final ProjectMetadata fromValues(@JsonProperty("name") final String name,
+			@JsonProperty("vendor") final String vendor) {
+		Preconditions.checkNotNull(name, "name is null.");
+		Preconditions.checkNotNull(vendor, "vendor is null.");
+		Preconditions.checkArgument(!name.isEmpty(), "name.isEmpty() == true");
+		Preconditions.checkArgument(!vendor.isEmpty(),
+				"vendor.isEmpty() == true");
 		return new ProjectMetadata(name, vendor);
 	}
 
+	/**
+	 * @return a default instance, can be used for testing
+	 */
+	public static final ProjectMetadata defaultInstance() {
+		return DEFAULT_INSTANCE;
+	}
 	/**
 	 * Factory method for ProjectMetadata, returns a new instance from an
 	 * InputStream to YAML metadata.
@@ -73,18 +83,14 @@ public final class ProjectMetadata {
 	 *            an java.io.InputSt5ream of YAML metadata
 	 * @return a populated project metadata instance
 	 */
-	public static final ProjectMetadata getInstance(InputStream yamlStream) {
+	public static final ProjectMetadata fromYamlStream(InputStream yamlStream) {
 		Preconditions.checkNotNull(yamlStream, "yamlStream is null");
 		ProjectMetadata pmd = null;
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		try {
 			pmd = mapper.readValue(yamlStream, ProjectMetadata.class);
-		} catch (JsonParseException excep) {
-			// TODO Auto-generated catch block
-			excep.printStackTrace();
-		} catch (JsonMappingException excep) {
-			// TODO Auto-generated catch block
-			excep.printStackTrace();
+		} catch (JsonParseException | JsonMappingException excep) {
+			throw new IllegalArgumentException("Problem parsing project metadata from YAML stream.", excep);
 		} catch (IOException excep) {
 			// TODO Auto-generated catch block
 			excep.printStackTrace();
