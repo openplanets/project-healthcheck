@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -23,28 +21,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.io.FilenameUtils;
 import org.eclipse.egit.github.core.Repository;
-import org.eclipse.egit.github.core.RepositoryCommit;
-import org.eclipse.egit.github.core.Tree;
-import org.eclipse.egit.github.core.TreeEntry;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.GsonUtils;
-import org.eclipse.egit.github.core.service.CommitService;
-import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.service.RepositoryService;
-import org.eclipse.egit.github.core.service.UserService;
-import org.opf_labs.project.healthcheck.GitHubProject.CiInfo;
-import org.opf_labs.project.healthcheck.GitHubProject.Indicators;
 
 import com.google.common.base.Joiner;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -64,10 +47,6 @@ import freemarker.template.TemplateException;
  * Created 10 Jul 2013:10:44:23
  */
 public final class HealthCheckCLI {
-	// String constants for info files
-	private static final String README = "readme";
-	private static final String LICENSE = "license";
-	private static final String OPF_YAML = ".opf.yml";
 	
 	// Constants for CLI Options
 	private static final String FILE_OPT = "file";
@@ -120,7 +99,6 @@ public final class HealthCheckCLI {
 	 * 
 	 * @param args the command line args passed at invocation
 	 */
-	@SuppressWarnings("resource")
 	public final static void main(final String[] args) {
 		// Create a command line parser
 		CommandLineParser cmdParser = new GnuParser();
@@ -137,7 +115,7 @@ public final class HealthCheckCLI {
 			GitHubClient ghClient = createGitHubClient(cmd);
 			
 			// Now the organisation name
-			User user = getUser(ghClient, getOrgName(cmd));
+			User user = GitHubProjects.getUser(ghClient, getOrgName(cmd));
 			
 			// Get a file writer if requested
 			if (!cmd.hasOption(FILE_OPT)) {
@@ -201,12 +179,6 @@ public final class HealthCheckCLI {
 		return (cmd.hasOption(ORGANISATION_OPT)) ? cmd.getOptionValue(ORGANISATION_OPT) : DEFAULT_ORG_NAME;
 	}
 
-	private final static User getUser(final GitHubClient ghClient, final String orgName) throws IOException {
-		// Create the organisation info object from Git Hub information
-		UserService userService = new UserService(ghClient);
-		return userService.getUser(orgName);
-	}
-	
 	private final static Writer getFileOutputWriter(String filePath) throws IOException {
 		File outFile = new File(filePath);
 		if (!outFile.exists()) {
@@ -222,43 +194,9 @@ public final class HealthCheckCLI {
 		for (Repository repo : repos) {
 			// Skip the private repos
 			if (repo.isPrivate()) continue;
-			projects.add(GitHubProject.newInstance(repo, getProjectIndicators(ghClient, repo), getContinousIntegration(repo)));
+			projects.add(GitHubProject.newInstance(repo, GitHubProjects.getProjectIndicators(ghClient, repo), GitHubProjects.getTravisInfo(repo)));
 		}
 		return projects;
-	}
-
-	private final static Indicators getProjectIndicators(final GitHubClient ghClient, final Repository repo) throws IOException {
-		String readMeUrl = "", licenseUrl = "", metadataUrl = "";
-		CommitService commitService = new CommitService(ghClient);
-		DataService dataService = new DataService(ghClient);
-		List<RepositoryCommit> commits = commitService.getCommits(repo); 
-		Tree tree = commits.get(0).getCommit().getTree();
-		String treeSha = tree.getSha();
-		tree = dataService.getTree(repo, treeSha);
-		for (TreeEntry treeEntry : tree.getTree()) {
-			if (! (treeEntry.getType().equals(TreeEntry.TYPE_BLOB))) continue;
-			String baseName = FilenameUtils.getBaseName(treeEntry.getPath());
-			if (baseName.equalsIgnoreCase(README)) readMeUrl = repo.getHtmlUrl() + "#readme";
-			if (baseName.equalsIgnoreCase(LICENSE))	licenseUrl = repo.getHtmlUrl() + "/blob/master/" + treeEntry.getPath();
-			if (treeEntry.getPath().equalsIgnoreCase(OPF_YAML)) metadataUrl = repo.getHtmlUrl() + "/blob/master/" + treeEntry.getPath();
-		}
-		return new Indicators(readMeUrl, licenseUrl, metadataUrl);
-	}
-	
-	private final static CiInfo getContinousIntegration(final Repository repo) {
-		Client restClient = Client.create();
-		WebResource travisCall = restClient.resource("https://api.travis-ci.org/repos/" + repo.getOwner().getLogin() + "/" + repo.getName());
-		ClientResponse response = travisCall.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
-		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND)
-			return new CiInfo(false);
-		JsonParser parser = new JsonParser();
-		String entity = response.getEntity(String.class);
-		JsonObject travisInfo = parser.parse(entity).getAsJsonObject();
-		if (travisInfo.has("last_build_id") && !(JsonNull.INSTANCE.equals(travisInfo.get("last_build_id")))) {
-			System.out.println(response.getStatus() + ": " + travisInfo.get("last_build_id").getAsString());
-			return new CiInfo(true);
-		}
-		return new CiInfo(false);
 	}
 
 	private final static void outputHtml(final User user, final List<GitHubProject> projects, final Writer outWriter) {
