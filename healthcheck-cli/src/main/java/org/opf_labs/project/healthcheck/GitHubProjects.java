@@ -4,6 +4,7 @@
 package org.opf_labs.project.healthcheck;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
@@ -17,6 +18,7 @@ import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.DataService;
+import org.eclipse.egit.github.core.service.RepositoryService;
 import org.eclipse.egit.github.core.service.UserService;
 import org.opf_labs.project.healthcheck.GitHubProject.CiInfo;
 import org.opf_labs.project.healthcheck.GitHubProject.Indicators;
@@ -142,4 +144,33 @@ public final class GitHubProjects {
 		}
 		return new CiInfo(false);
 	}
+
+	/**
+	 * @param ghClient
+	 *            an EGit GitHub client object, holds credentials for gitHub
+	 *            connection.
+	 * @param ghLogin
+	 *            the string GitHub login of the GitHub user whos project info's
+	 *            retrieved.
+	 * @return a java.util.List of GitHub projects for the user identifie by the
+	 *         login string
+	 * @throws IOException
+	 */
+	public final static List<GitHubProject> createProjectList(
+			final GitHubClient ghClient, final String ghLogin)
+			throws IOException {
+		RepositoryService repoService = new RepositoryService(ghClient);
+		List<GitHubProject> projects = new ArrayList<GitHubProject>();
+		List<Repository> repos = repoService.getOrgRepositories(ghLogin);
+		for (Repository repo : repos) {
+			// Skip the private repos
+			if (repo.isPrivate())
+				continue;
+			projects.add(GitHubProject.newInstance(repo,
+					ProjectMetadata.defaultInstance(),
+					getProjectIndicators(ghClient, repo), getTravisInfo(repo)));
+		}
+		return projects;
+	}
+
 }

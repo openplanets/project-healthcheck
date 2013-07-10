@@ -21,11 +21,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.GsonUtils;
-import org.eclipse.egit.github.core.service.RepositoryService;
 
 import com.google.common.base.Joiner;
 
@@ -123,7 +121,7 @@ public final class HealthCheckCLI {
 				outWriter = getFileOutputWriter(cmd.getOptionValue(FILE_OPT));
 			}
 
-			List<GitHubProject> projects = createProjectList(ghClient, user.getLogin());
+			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
 			if (cmd.hasOption(HTML_OPT)) {
 				outputHtml(user, projects, outWriter);
 			} else {
@@ -187,18 +185,6 @@ public final class HealthCheckCLI {
 		return new FileWriter(outFile, false);
 	}
 	
-	private final static List<GitHubProject> createProjectList(final GitHubClient ghClient, final String userId) throws IOException {
-		RepositoryService repoService = new RepositoryService(ghClient);
-		List<GitHubProject> projects = new ArrayList<GitHubProject>(); 
-		List<Repository> repos = repoService.getOrgRepositories(userId);
-		for (Repository repo : repos) {
-			// Skip the private repos
-			if (repo.isPrivate()) continue;
-			projects.add(GitHubProject.newInstance(repo, GitHubProjects.getProjectIndicators(ghClient, repo), GitHubProjects.getTravisInfo(repo)));
-		}
-		return projects;
-	}
-
 	private final static void outputHtml(final User user, final List<GitHubProject> projects, final Writer outWriter) {
 		Configuration cfg = new Configuration();
 		cfg.setOutputEncoding("utf-8");
