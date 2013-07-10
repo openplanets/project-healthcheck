@@ -116,7 +116,7 @@ public final class HealthCheckCLI {
 			User user = GitHubProjects.getUser(ghClient, getOrgName(cmd));
 			
 			// Get a file writer if requested
-			if (!cmd.hasOption(FILE_OPT)) {
+			if (cmd.hasOption(FILE_OPT)) {
 				outWriter.close();
 				outWriter = getFileOutputWriter(cmd.getOptionValue(FILE_OPT));
 			}
@@ -178,6 +178,7 @@ public final class HealthCheckCLI {
 	}
 
 	private final static Writer getFileOutputWriter(String filePath) throws IOException {
+		System.out.println("Getting file writer.");
 		File outFile = new File(filePath);
 		if (!outFile.exists()) {
 			if (!outFile.createNewFile()) throw new IOException();
