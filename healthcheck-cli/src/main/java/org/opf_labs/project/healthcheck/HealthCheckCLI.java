@@ -10,8 +10,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -198,11 +200,16 @@ public final class HealthCheckCLI {
 			ObjectMapper mapper = new ObjectMapper(new JsonFactory());
 			templateData.put("userJson", mapper.writeValueAsString(user));
 			List<String> projectsJson = new ArrayList<String>();
+			Set<String> vendors = new HashSet<String>();
 			for (GitHubProject project : projects) {
 				projectsJson.add(mapper.writeValueAsString(project));
+				if (project.metadata != ProjectMetadata.defaultInstance()) {
+					vendors.add(project.metadata.vendor);
+				}
 			}
 			Joiner joiner = Joiner.on(",");
 			templateData.put("projectsJson", joiner.join(projectsJson));
+			templateData.put("vendors", vendors);
 			indexTemplate.process(templateData, outWriter);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

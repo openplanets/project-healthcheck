@@ -54,9 +54,10 @@
 					</ul>
 				</div>
 				<div class="span5 filter">
-					<ul>
-						<li class="pull-right"><a rel="scape" href="#">SCAPE</a></li>
-						<li class="pull-right"><a rel="new" href="#">New</a></li>
+					<ul id="filters">
+						<#list vendors as vendor>
+							<li class="pull-right"><a rel="${vendor}" href="#">${vendor}</a></li>
+						</#list>
 						<li class="pull-right"><a class="selected" rel="all" href="#">All</a></li>
 					</ul>
 				</div>

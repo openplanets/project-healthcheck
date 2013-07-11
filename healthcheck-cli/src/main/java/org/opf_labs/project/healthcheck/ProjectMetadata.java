@@ -23,8 +23,6 @@ import com.google.common.base.Preconditions;
  * 
  * TODO Tests for ProjectMetadata.</p>
  * 
- * TODO Implementation for ProjectMetadata.</p>
- * 
  * @author <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
  *         <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
  * @version 0.1
@@ -33,6 +31,8 @@ import com.google.common.base.Preconditions;
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
 public final class ProjectMetadata {
+	private final static String OPF_FULL = "Open Planets Foundation";
+	private final static String OPF = "OPF";
 	private final static ProjectMetadata DEFAULT_INSTANCE = new ProjectMetadata(GitHubProjects.UNKNOWN, GitHubProjects.UNKNOWN);
 	/** The projects full name */
 	public final String name;
@@ -45,7 +45,7 @@ public final class ProjectMetadata {
 
 	private ProjectMetadata(final String name, final String vendor) {
 		this.name = name;
-		this.vendor = vendor;
+		this.vendor = (vendor.equalsIgnoreCase(OPF_FULL)) ? OPF : vendor;
 	}
 
 	/**

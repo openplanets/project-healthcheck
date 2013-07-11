@@ -81,7 +81,7 @@ public class ProjectMetadataTest {
 		InputStream fis = new FileInputStream(testYaml);
 		ProjectMetadata pmd = ProjectMetadata.fromYamlStream(fis);
 		assertEquals("OPF Project Healthcheck", pmd.name);
-		assertEquals("Open Planets Foundation", pmd.vendor);
+		assertEquals("OPF", pmd.vendor);
 		fis.close();
 	}
 
