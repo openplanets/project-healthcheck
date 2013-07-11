@@ -33,8 +33,7 @@ import com.google.common.base.Preconditions;
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
 public final class ProjectMetadata {
-	private final static String UNKNOWN = "unknown";
-	private final static ProjectMetadata DEFAULT_INSTANCE = new ProjectMetadata(UNKNOWN, UNKNOWN);
+	private final static ProjectMetadata DEFAULT_INSTANCE = new ProjectMetadata(GitHubProjects.UNKNOWN, GitHubProjects.UNKNOWN);
 	/** The projects full name */
 	public final String name;
 	/** The projects vendor identifier, could be an individual, organisation, or project. */

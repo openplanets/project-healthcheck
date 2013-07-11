@@ -20,6 +20,7 @@ import org.eclipse.egit.github.core.service.CommitService;
 import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.eclipse.egit.github.core.service.UserService;
+import org.opf_labs.project.healthcheck.GitHubProject.Builder;
 import org.opf_labs.project.healthcheck.GitHubProject.CiInfo;
 import org.opf_labs.project.healthcheck.GitHubProject.Indicators;
 
@@ -46,6 +47,9 @@ import com.sun.jersey.api.client.WebResource;
  */
 
 public final class GitHubProjects {
+	/** String constant for unknown values **/
+	public final static String UNKNOWN = "unknown";
+	
 	// String constants for info files
 	private static final String README = "readme";
 	private static final String LICENSE = "license";
@@ -166,9 +170,8 @@ public final class GitHubProjects {
 			// Skip the private repos
 			if (repo.isPrivate())
 				continue;
-			projects.add(GitHubProject.newInstance(repo,
-					ProjectMetadata.defaultInstance(),
-					getProjectIndicators(ghClient, repo), getTravisInfo(repo)));
+			Builder projBuilder = (new Builder(repo)).indicators(getProjectIndicators(ghClient, repo)).ci(getTravisInfo(repo)); 
+			projects.add(projBuilder.build());
 		}
 		return projects;
 	}
