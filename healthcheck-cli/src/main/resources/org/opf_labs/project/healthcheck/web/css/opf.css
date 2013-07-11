@@ -72,4 +72,5 @@ ul {
 
 a.selected {
   text-decoration:underline;
+  font-weight:bold;
 }

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -200,7 +201,7 @@ public final class HealthCheckCLI {
 			ObjectMapper mapper = new ObjectMapper(new JsonFactory());
 			templateData.put("userJson", mapper.writeValueAsString(user));
 			List<String> projectsJson = new ArrayList<String>();
-			Set<String> vendors = new HashSet<String>();
+			Set<String> vendors = new TreeSet<String>();
 			for (GitHubProject project : projects) {
 				projectsJson.add(mapper.writeValueAsString(project));
 				if (project.metadata != ProjectMetadata.defaultInstance()) {

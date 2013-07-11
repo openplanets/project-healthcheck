@@ -1,23 +1,34 @@
 var projectList = {
   fourWeek: new Date(),
   threeMonth: new Date(),
+  filter: "All",
   user: null,
   projects: [],
-  filteredProjects: [],
   currentProject: null,
   init: function(user, projects) {
 	projectList.fourWeek = projectList.fourWeek.setDate(projectList.fourWeek.getDate() - 28);
 	projectList.threeMonth = projectList.threeMonth.setDate(projectList.threeMonth.getDate() - (30 * 3));
     projectList.user = user;
-    projectList.projects = projects;
-    projectList.filteredProjects = projects.sort(function(a, b) {
+    projectList.projects = projects.sort(function(a, b) {
 		if (a.updated < b.updated) return 1;
 		if (a.updated > b.updated) return -1;
 		return 0;
       });
+    $('#filters > li').each(function(index, element) {
+	$(element).children(":first").click(function(event){
+	  projectList.filter = $(this).text();
+	  projectList.drawList();
+	});
+    });
+    projectList.drawList();
+  },
+  drawList: function() {
     $('#repos').empty();
-    $.each(projectList.filteredProjects, projectList.toListItem);
-	$("ul.proj-info > li").addClass("pull-left");
+    $.each(jQuery.grep(projectList.projects, function(proj) {
+	if (projectList.filter == "All") return true;
+	return (proj.metadata.vendor == projectList.filter);
+      }), projectList.toListItem);
+    $("ul.proj-info > li").addClass("pull-left");
   },
   toListItem: function(index, proj) {
     projectList.currentProject = proj;
