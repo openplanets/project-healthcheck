@@ -115,7 +115,7 @@ public final class GitHubProjects {
 				metadataUrl = repo.getHtmlUrl() + "/blob/master/"
 						+ treeEntry.getPath();
 		}
-		return new Indicators(readMeUrl, licenseUrl, metadataUrl);
+		return Indicators.fromValues(readMeUrl, licenseUrl, metadataUrl);
 	}
 
 	/**
@@ -133,16 +133,16 @@ public final class GitHubProjects {
 		ClientResponse response = travisCall.accept(MediaType.APPLICATION_JSON)
 				.get(ClientResponse.class);
 		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND)
-			return new CiInfo(false);
+			return CiInfo.fromValues(false);
 		JsonParser parser = new JsonParser();
 		String entity = response.getEntity(String.class);
 		JsonObject travisInfo = parser.parse(entity).getAsJsonObject();
 		if (travisInfo.has(TRAVIS_BUILD_LABEL)
 				&& !(JsonNull.INSTANCE.equals(travisInfo
 						.get(TRAVIS_BUILD_LABEL)))) {
-			return new CiInfo(true);
+			return CiInfo.fromValues(true);
 		}
-		return new CiInfo(false);
+		return CiInfo.fromValues(false);
 	}
 
 	/**

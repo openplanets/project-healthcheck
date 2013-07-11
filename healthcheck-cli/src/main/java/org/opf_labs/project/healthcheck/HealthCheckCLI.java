@@ -23,8 +23,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.client.GsonUtils;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
 import freemarker.template.Configuration;
@@ -194,10 +195,11 @@ public final class HealthCheckCLI {
 			Template indexTemplate = cfg.getTemplate("index.html");
 			Map<String, Object> templateData = new HashMap<String, Object>();
 			templateData.put("user", user);
-			templateData.put("userJson", GsonUtils.toJson(user));
+			ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+			templateData.put("userJson", mapper.writeValueAsString(user));
 			List<String> projectsJson = new ArrayList<String>();
 			for (GitHubProject project : projects) {
-				projectsJson.add(GsonUtils.toJson(project));
+				projectsJson.add(mapper.writeValueAsString(project));
 			}
 			Joiner joiner = Joiner.on(",");
 			templateData.put("projectsJson", joiner.join(projectsJson));
@@ -216,9 +218,9 @@ public final class HealthCheckCLI {
 
 		int repoCount = 0;
 		for (GitHubProject project : projects) {
-			outWriter.write(++repoCount + ": " + project.repo.getName()
-					+ ", created: " + project.repo.getCreatedAt());
-			outWriter.write(project.repo.getDescription());
+			outWriter.write(++repoCount + ": " + project.name
+					+ ", updated: " + project.updated);
+			outWriter.write(project.description);
 		}
 	}
 
