@@ -3,18 +3,20 @@ var projectList = {
   threeMonth: new Date(),
   user: null,
   projects: [],
+  filteredProjects: [],
   currentProject: null,
   init: function(user, projects) {
 	projectList.fourWeek = projectList.fourWeek.setDate(projectList.fourWeek.getDate() - 28);
 	projectList.threeMonth = projectList.threeMonth.setDate(projectList.threeMonth.getDate() - (30 * 3));
     projectList.user = user;
-    projectList.projects = projects.sort(function(a, b) {
-	if (a.updated < b.updated) return 1;
-	if (a.updated > b.updated) return -1;
-	return 0;
+    projectList.projects = projects;
+    projectList.filteredProjects = projects.sort(function(a, b) {
+		if (a.updated < b.updated) return 1;
+		if (a.updated > b.updated) return -1;
+		return 0;
       });
     $('#repos').empty();
-    $.each(projectList.projects, projectList.toListItem);
+    $.each(projectList.filteredProjects, projectList.toListItem);
 	$("ul.proj-info > li").addClass("pull-left");
   },
   toListItem: function(index, proj) {

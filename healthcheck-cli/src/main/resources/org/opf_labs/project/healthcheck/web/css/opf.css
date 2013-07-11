@@ -32,7 +32,7 @@ html, body {
   padding-top: 60px;
 }
 
- .credit {
+.credit {
   margin: 20px 0;
 }
 
@@ -68,4 +68,8 @@ ul {
   border-top: 1px solid #777;
   border-right: 1px solid #777;
   padding: 5px 0;
+}
+
+a.selected {
+  text-decoration:underline;
 }
