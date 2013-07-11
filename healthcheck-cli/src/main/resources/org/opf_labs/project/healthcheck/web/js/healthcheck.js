@@ -9,8 +9,8 @@ var projectList = {
 	projectList.threeMonth = projectList.threeMonth.setDate(projectList.threeMonth.getDate() - (30 * 3));
     projectList.user = user;
     projectList.projects = projects.sort(function(a, b) {
-	if (a.repo.updated_at < b.repo.updated_at) return 1;
-	if (a.repo.updated_at > b.repo.updated_at) return -1;
+	if (a.updated < b.updated) return 1;
+	if (a.updated > b.updated) return -1;
 	return 0;
       });
     $('#repos').empty();
@@ -42,8 +42,8 @@ var projectList = {
   },
   getName: function() {
     var anchor = $('<a>').attr({
-	href: projectList.currentProject.repo.html_url
-    }).text(" " + projectList.currentProject.repo.name);
+	href: projectList.currentProject.url
+    }).text(" " + projectList.currentProject.name);
     bootstrapUtils.getIcon("github-alt").prependTo(anchor);
     return anchor;
   },
@@ -52,26 +52,26 @@ var projectList = {
 	    class: "details"
 	});
 	var descContainer = $('<div class="desc">');
-	var descPara = (projectList.currentProject.repo.description) ? $('<p>') : $('<p class="text-warning">');
-	descPara.append($('<i class="icon-file-alt"></i>' + projectList.currentProject.repo.description + '</p></div>'));
+	var descPara = (projectList.currentProject.description) ? $('<p>') : $('<p class="text-warning">');
+	descPara.append($('<i class="icon-file-alt"></i>' + projectList.currentProject.description + '</p></div>'));
 	descContainer.append(descPara);
 	div.append(descContainer);
 	var list = $('<ul>').attr({
 		class: "proj-info"
 	});
 	list.append(projectList.getActivity());
-	list.append(bootstrapUtils.listPebble("laptop", projectList.currentProject.repo.language, "info"));
-	list.append(bootstrapUtils.listPebble("tasks", projectList.currentProject.repo.open_issues, (projectList.currentProject.repo.open_issues > 0) ? "success" : "warning"));
+	list.append(bootstrapUtils.listPebble("laptop", projectList.currentProject.language, "info"));
+	list.append(bootstrapUtils.listPebble("tasks", projectList.currentProject.openIssues, (projectList.currentProject.openIssues > 0) ? "success" : "warning"));
 	div.append(list);
 	
 	return div;
   },
   getActivity: function() {
-	var updatedAt = new Date(projectList.currentProject.repo.updated_at);
+	var updatedAt = new Date(projectList.currentProject.updated);
 	var status = "success";
 	if (updatedAt < projectList.fourWeek) status = "warning";
 	if (updatedAt < projectList.threeMonth) status = "important";
-	return bootstrapUtils.listPebble("calendar", projectList.currentProject.repo.updated_at.toString().slice(0, 10), status)
+	return bootstrapUtils.listPebble("calendar", projectList.formatDate(updatedAt), status)
   },
   getProjectInfo: function() {
 	var div = $('<div>').attr({
@@ -82,11 +82,11 @@ var projectList = {
   },
   getIndicators: function() {
 	var container = $('<ul>');
-	var pebble = bootstrapUtils.listPebble("book", "readme", projectList.currentProject.indicators.read_me_url ? "success" : "important", projectList.currentProject.indicators.read_me_url);
+	var pebble = bootstrapUtils.listPebble("book", "readme", projectList.currentProject.indicators.readMeUrl ? "success" : "important", projectList.currentProject.indicators.readMeUrl);
 	container.append(pebble);
-	pebble = bootstrapUtils.listPebble("legal", "license", projectList.currentProject.indicators.license_url ? "success" : "important", projectList.currentProject.indicators.license_url);
+	pebble = bootstrapUtils.listPebble("legal", "license", projectList.currentProject.indicators.licenseUrl ? "success" : "important", projectList.currentProject.indicators.licenseUrl);
 	container.append(pebble);
-	pebble = bootstrapUtils.listPebble("info-sign", "metadata", projectList.currentProject.indicators.metadata_url ? "success" : "important", projectList.currentProject.indicators.metadata_url);
+	pebble = bootstrapUtils.listPebble("info-sign", "metadata", projectList.currentProject.indicators.metadataUrl ? "success" : "important", projectList.currentProject.indicators.metadataUrl);
 	container.append(pebble);
 	return container;
   },
@@ -98,16 +98,19 @@ var projectList = {
 	return div;
   },
   getTravisAnchor: function() {
-	if (!projectList.currentProject.ci.has_travis) {
+	if (!projectList.currentProject.ci.hasTravis) {
 		return bootstrapUtils.listPebble("wrench", "No Travis Build", "important");
 	}
 	var anchor = $('<a>').attr({
-	  href: "https://travis-ci.org/" + projectList.currentProject.repo.owner.login + "/" + projectList.currentProject.repo.name
+	  href: "https://travis-ci.org/" + projectList.currentProject.ownerLogin + "/" + projectList.currentProject.name
 	});
 	anchor.append(bootstrapUtils.pebble("wrench", " Travis", "success"));
 	anchor.append($('<img>').attr({
-	    src: "https://travis-ci.org/" + projectList.currentProject.repo.owner.login + "/" + projectList.currentProject.repo.name + ".png"
+	    src: "https://travis-ci.org/" + projectList.currentProject.ownerLogin + "/" + projectList.currentProject.name + ".png"
 	}));
 	return anchor;
+  },
+  formatDate: function(date) {
+	  return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
   }
 };
