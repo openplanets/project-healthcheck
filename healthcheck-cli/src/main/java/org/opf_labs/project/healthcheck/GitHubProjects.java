@@ -12,11 +12,14 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
+import org.eclipse.egit.github.core.RepositoryContents;
 import org.eclipse.egit.github.core.Tree;
 import org.eclipse.egit.github.core.TreeEntry;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
+import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.CommitService;
+import org.eclipse.egit.github.core.service.ContentsService;
 import org.eclipse.egit.github.core.service.DataService;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.eclipse.egit.github.core.service.UserService;
@@ -30,6 +33,7 @@ import com.google.gson.JsonParser;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.core.util.Base64;
 
 /**
  * Utility class for the GitHubProject bean. Gathers project information from
@@ -49,7 +53,7 @@ import com.sun.jersey.api.client.WebResource;
 public final class GitHubProjects {
 	/** String constant for unknown values **/
 	public final static String UNKNOWN = "unknown";
-	
+
 	// String constants for info files
 	private static final String README = "readme";
 	private static final String LICENSE = "license";
@@ -123,6 +127,28 @@ public final class GitHubProjects {
 	}
 
 	/**
+	 * @param ghClient
+	 *            an EGit GitHub client object, holds credentials for gitHub
+	 *            connection.
+	 * @param repo
+	 *            an EGit GitHub repository object for the project
+	 * @return a ProjectMetadata instance.
+	 * @throws IOException
+	 *             if there's a problem calling the GitHub API
+	 */
+	public final static ProjectMetadata getMetadata(
+			final GitHubClient ghClient, final Repository repo) throws IOException {
+		ContentsService contentService = new ContentsService(ghClient);
+		try {
+			List<RepositoryContents> contents = contentService.getContents(repo, OPF_YAML);
+			return ProjectMetadata.fromYamlString(Base64.base64Decode(contents.get(0).getContent()));
+		} catch (RequestException excep) {
+			// No YAML file found
+			return ProjectMetadata.defaultInstance();
+		}
+	}
+
+	/**
 	 * Retrieves the Travis Continuous Integration information for a software
 	 * project.
 	 * 
@@ -170,7 +196,11 @@ public final class GitHubProjects {
 			// Skip the private repos
 			if (repo.isPrivate())
 				continue;
-			Builder projBuilder = (new Builder(repo)).indicators(getProjectIndicators(ghClient, repo)).ci(getTravisInfo(repo)); 
+			ProjectMetadata metadata = getMetadata(ghClient,
+					repo);
+			Builder projBuilder = (new Builder(repo)).metadata(metadata)
+					.indicators(getProjectIndicators(ghClient, repo))
+					.ci(getTravisInfo(repo));
 			projects.add(projBuilder.build());
 		}
 		return projects;

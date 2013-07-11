@@ -79,7 +79,7 @@ public final class ProjectMetadata {
 	 * InputStream to YAML metadata.
 	 * 
 	 * @param yamlStream
-	 *            an java.io.InputSt5ream of YAML metadata
+	 *            an java.io.InputStream of YAML metadata
 	 * @return a populated project metadata instance
 	 */
 	public static final ProjectMetadata fromYamlStream(InputStream yamlStream) {
@@ -88,6 +88,28 @@ public final class ProjectMetadata {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		try {
 			pmd = mapper.readValue(yamlStream, ProjectMetadata.class);
+		} catch (JsonParseException | JsonMappingException excep) {
+			throw new IllegalArgumentException("Problem parsing project metadata from YAML stream.", excep);
+		} catch (IOException excep) {
+			// TODO Auto-generated catch block
+			excep.printStackTrace();
+		}
+		return pmd;
+	}
+	
+	/**
+	 * Factory method for ProjectMetadata, returns a new instance from a
+	 * String to YAML metadata.
+	 * @param yaml a YAML string representation of the project metadata
+	 * @return a populated project metadata instance
+	 */
+	public final static ProjectMetadata fromYamlString(String yaml) {
+		Preconditions.checkNotNull(yaml, "yaml == null");
+		Preconditions.checkArgument(!yaml.isEmpty(), "yaml.isEmpty() == true");
+		ProjectMetadata pmd = null;
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		try {
+			pmd = mapper.readValue(yaml.replaceAll("\t", "  "), ProjectMetadata.class);
 		} catch (JsonParseException | JsonMappingException excep) {
 			throw new IllegalArgumentException("Problem parsing project metadata from YAML stream.", excep);
 		} catch (IOException excep) {
