@@ -27,12 +27,12 @@ import org.opf_labs.project.healthcheck.GitHubProject.Builder;
 import org.opf_labs.project.healthcheck.GitHubProject.CiInfo;
 import org.opf_labs.project.healthcheck.GitHubProject.Indicators;
 
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.util.Base64;
 
 /**
@@ -62,8 +62,6 @@ public final class GitHubProjects {
 	// String constants for Travis
 	private static final String TRAVIS_ROOT = "https://api.travis-ci.org/";
 	private static final String TRAVIS_REPO_ROOT = TRAVIS_ROOT + "repos/";
-	private static final String TRAVIS_BUILD_LABEL = "last_build_id";
-
 	private GitHubProjects() {
 		throw new AssertionError("In GitHubProjects constructor.");
 	}
@@ -137,11 +135,14 @@ public final class GitHubProjects {
 	 *             if there's a problem calling the GitHub API
 	 */
 	public final static ProjectMetadata getMetadata(
-			final GitHubClient ghClient, final Repository repo) throws IOException {
+			final GitHubClient ghClient, final Repository repo)
+			throws IOException {
 		ContentsService contentService = new ContentsService(ghClient);
 		try {
-			List<RepositoryContents> contents = contentService.getContents(repo, OPF_YAML);
-			return ProjectMetadata.fromYamlString(Base64.base64Decode(contents.get(0).getContent()));
+			List<RepositoryContents> contents = contentService.getContents(
+					repo, OPF_YAML);
+			return ProjectMetadata.fromYamlString(Base64.base64Decode(contents
+					.get(0).getContent()));
 		} catch (RequestException excep) {
 			// No YAML file found
 			return ProjectMetadata.defaultInstance();
@@ -152,27 +153,27 @@ public final class GitHubProjects {
 	 * Retrieves the Travis Continuous Integration information for a software
 	 * project.
 	 * 
-	 * @param repo
-	 *            the projects GitHub repository object.
+	 * @param ownerLogin
+	 *            the GitHub login (id) of the repository
+	 * @param repoName
+	 *            the name of the repository
+	 * 
 	 * @return the Travis CI Information for the project.
 	 */
-	public final static CiInfo getTravisInfo(final Repository repo) {
-		Client restClient = Client.create();
+	public final static CiInfo getTravisInfo(final String ownerLogin,
+			final String repoName) {
+		ClientConfig cc = new DefaultClientConfig();
+		cc.getClasses().add(JacksonJsonProvider.class);
+		Client restClient = Client.create(cc);
 		WebResource travisCall = restClient.resource(TRAVIS_REPO_ROOT
-				+ repo.getOwner().getLogin() + "/" + repo.getName());
+				+ ownerLogin + "/" + repoName);
 		ClientResponse response = travisCall.accept(MediaType.APPLICATION_JSON)
 				.get(ClientResponse.class);
 		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND)
 			return CiInfo.fromValues(false);
-		JsonParser parser = new JsonParser();
-		String entity = response.getEntity(String.class);
-		JsonObject travisInfo = parser.parse(entity).getAsJsonObject();
-		if (travisInfo.has(TRAVIS_BUILD_LABEL)
-				&& !(JsonNull.INSTANCE.equals(travisInfo
-						.get(TRAVIS_BUILD_LABEL)))) {
-			return CiInfo.fromValues(true);
-		}
-		return CiInfo.fromValues(false);
+		TravisRepo entity = response.getEntity(TravisRepo.class);
+		System.err.println("Travis:" + entity.toString()); 
+		return CiInfo.fromValues(entity.lastBuildId != 0);
 	}
 
 	/**
@@ -180,9 +181,9 @@ public final class GitHubProjects {
 	 *            an EGit GitHub client object, holds credentials for gitHub
 	 *            connection.
 	 * @param ghLogin
-	 *            the string GitHub login of the GitHub user whos project info's
+	 *            the string GitHub login of the GitHub user who's project info's
 	 *            retrieved.
-	 * @return a java.util.List of GitHub projects for the user identifie by the
+	 * @return a java.util.List of GitHub projects for the user identified by the
 	 *         login string
 	 * @throws IOException
 	 */
@@ -196,11 +197,11 @@ public final class GitHubProjects {
 			// Skip the private repos
 			if (repo.isPrivate())
 				continue;
-			ProjectMetadata metadata = getMetadata(ghClient,
-					repo);
+			ProjectMetadata metadata = getMetadata(ghClient, repo);
+			System.err.println(ghLogin + ":" + repo.getName());
 			Builder projBuilder = (new Builder(repo)).metadata(metadata)
 					.indicators(getProjectIndicators(ghClient, repo))
-					.ci(getTravisInfo(repo));
+					.ci(getTravisInfo(ghLogin, repo.getName()));
 			projects.add(projBuilder.build());
 		}
 		return projects;
