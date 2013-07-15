@@ -111,7 +111,7 @@ public final class GitHubProject {
 				ownerLogin,
 				url,
 				updated,
-				(language == null || language.isEmpty()) ? "unknown" : language,
+				(language == null || language.isEmpty()) ? GitHubProjects.UNKNOWN : language,
 				openIssues, metadata, indicators, ci);
 	}
 
