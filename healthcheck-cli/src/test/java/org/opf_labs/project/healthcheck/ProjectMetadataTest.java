@@ -19,6 +19,7 @@ import org.junit.Test;
  * 
  *          Created 10 Jul 2013:14:43:40
  */
+@SuppressWarnings("static-method")
 public class ProjectMetadataTest {
 
 	/**

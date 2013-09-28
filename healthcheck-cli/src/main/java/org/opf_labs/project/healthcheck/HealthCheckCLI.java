@@ -189,18 +189,18 @@ public final class HealthCheckCLI {
 		return new FileWriter(outFile, false);
 	}
 	
-	private final static void outputHtml(final User user, final List<GitHubProject> projects, final Writer outWriter) {
+	private static final void outputHtml(final User user, final List<GitHubProject> projects, final Writer outWriter) {
 		Configuration cfg = new Configuration();
 		cfg.setOutputEncoding("utf-8");
 		cfg.setClassForTemplateLoading(HealthCheckCLI.class, getTemplateDir());
 		try {
 			Template indexTemplate = cfg.getTemplate("index.html");
-			Map<String, Object> templateData = new HashMap<String, Object>();
+			Map<String, Object> templateData = new HashMap<>();
 			templateData.put("user", user);
 			ObjectMapper mapper = new ObjectMapper(new JsonFactory());
 			templateData.put("userJson", mapper.writeValueAsString(user));
-			List<String> projectsJson = new ArrayList<String>();
-			Set<String> vendors = new TreeSet<String>();
+			List<String> projectsJson = new ArrayList<>();
+			Set<String> vendors = new TreeSet<>();
 			for (GitHubProject project : projects) {
 				projectsJson.add(mapper.writeValueAsString(project));
 				if (project.metadata != ProjectMetadata.defaultInstance()) {

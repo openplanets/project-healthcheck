@@ -126,7 +126,8 @@ public final class GitHubProject {
 	 * 
 	 *          Created 11 Jul 2013:10:12:45
 	 */
-	public final static class Builder {
+	@SuppressWarnings("hiding") 
+	static public final class Builder {
 		private String name = GitHubProjects.UNKNOWN;
 		private String description = GitHubProjects.UNKNOWN;
 		private String ownerLogin = GitHubProjects.UNKNOWN;
@@ -177,7 +178,7 @@ public final class GitHubProject {
 		 *            the name of the project
 		 * @return the builder instance for chaining
 		 */
-		public final Builder name(final String name) {
+		public Builder name(final String name) {
 			Preconditions.checkNotNull(name, "name == null");
 			Preconditions.checkArgument(!name.isEmpty(),
 					"name.isEmpty() == true");
@@ -190,7 +191,7 @@ public final class GitHubProject {
 		 *            a description of the project
 		 * @return the builder instance for chaining
 		 */
-		public final Builder description(final String description) {
+		public Builder description(final String description) {
 			Preconditions.checkNotNull(description, "description == null");
 			this.description = description;
 			return this;
@@ -201,7 +202,7 @@ public final class GitHubProject {
 		 *            the GitHub login of the project's owner
 		 * @return the builder instance for chaining
 		 */
-		public final Builder ownerLogin(final String ownerLogin) {
+		public Builder ownerLogin(final String ownerLogin) {
 			Preconditions.checkNotNull(ownerLogin, "ownerLogin == null");
 			Preconditions.checkArgument(!ownerLogin.isEmpty(),
 					"ownerLogin.isEmpty() == true");
@@ -214,7 +215,7 @@ public final class GitHubProject {
 		 *            the GitHub URL of the project, held as a string
 		 * @return the builder instance for chaining
 		 */
-		public final Builder url(final String url) {
+		public Builder url(final String url) {
 			Preconditions.checkNotNull(url, "url == null");
 			Preconditions
 					.checkArgument(!url.isEmpty(), "url.isEmpty() == true");
@@ -227,7 +228,7 @@ public final class GitHubProject {
 		 *            the main programming language of the project
 		 * @return the builder instance for chaining
 		 */
-		public final Builder language(final String language) {
+		public Builder language(final String language) {
 			this.language = ((language == null) || language.isEmpty()) ? GitHubProjects.UNKNOWN
 					: language;
 			return this;
@@ -238,7 +239,7 @@ public final class GitHubProject {
 		 *            the date that the project was last updated
 		 * @return the builder instance for chaining
 		 */
-		public final Builder updated(final Date updated) {
+		public Builder updated(final Date updated) {
 			Preconditions.checkNotNull(updated, "updated == null");
 			Preconditions.checkArgument(updated.before(new Date()),
 					"Updated date is in the future.");
@@ -251,7 +252,7 @@ public final class GitHubProject {
 		 *            the number of open issues for the project
 		 * @return the builder instance for chaining
 		 */
-		public final Builder openIssues(final int openIssues) {
+		public Builder openIssues(final int openIssues) {
 			Preconditions.checkArgument(openIssues >= 0, "openIssues < 0");
 			this.openIssues = openIssues;
 			return this;
@@ -262,7 +263,7 @@ public final class GitHubProject {
 		 *            the projects metadata block parsed from .opf.yml
 		 * @return the builder instance for chaining
 		 */
-		public final Builder metadata(final ProjectMetadata metadata) {
+		public Builder metadata(final ProjectMetadata metadata) {
 			Preconditions.checkNotNull(metadata, "metadata == null");
 			this.metadata = metadata;
 			return this;
@@ -273,7 +274,7 @@ public final class GitHubProject {
 		 *            the healthcheck indicators for the project
 		 * @return the builder instance for chaining
 		 */
-		public final Builder indicators(final Indicators indicators) {
+		public Builder indicators(final Indicators indicators) {
 			Preconditions.checkNotNull(indicators, "indicators == null");
 			this.indicators = indicators;
 			return this;
@@ -284,7 +285,7 @@ public final class GitHubProject {
 		 *            the Travis CI info for the project
 		 * @return the builder instance for chaining
 		 */
-		public final Builder ci(final CiInfo ci) {
+		public Builder ci(final CiInfo ci) {
 			Preconditions.checkNotNull(ci, "ci == null");
 			this.ci = ci;
 			return this;
@@ -352,7 +353,7 @@ public final class GitHubProject {
 		 * @return a new Indicators instance from the passed parameters
 		 */
 		@JsonCreator
-		public static final Indicators fromValues(
+		public static Indicators fromValues(
 				@JsonProperty("readMeUrl") final String readMeUrl,
 				@JsonProperty("licenseUrl") final String licenseUrl,
 				@JsonProperty("metadataUrl") final String metadataUrl) {

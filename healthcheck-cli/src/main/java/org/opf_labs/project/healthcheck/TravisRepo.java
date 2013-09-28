@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 /**
@@ -58,11 +57,8 @@ public final class TravisRepo {
 			@JsonProperty("last_build_status") final String lastBuildStatus,
 			@JsonProperty("last_build_result") final String lastBuildResult,
 			@JsonProperty("last_build_duration") final int lastBuildDuration) {
-		Strings.nullToEmpty(slug);
-		Strings.nullToEmpty(lastBuildStatus);
-		Strings.nullToEmpty(lastBuildResult);
-		return new TravisRepo(id, slug, lastBuildId, lastBuildStatus,
-				lastBuildResult, lastBuildDuration);
+		return new TravisRepo(id, Strings.nullToEmpty(slug), lastBuildId, Strings.nullToEmpty(lastBuildStatus),
+				Strings.nullToEmpty(lastBuildResult), lastBuildDuration);
 	}
 
 	@Override

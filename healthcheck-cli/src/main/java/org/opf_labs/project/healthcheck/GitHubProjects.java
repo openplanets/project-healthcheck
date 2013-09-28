@@ -52,7 +52,7 @@ import com.sun.jersey.core.util.Base64;
 
 public final class GitHubProjects {
 	/** String constant for unknown values **/
-	public final static String UNKNOWN = "unknown";
+	public static final String UNKNOWN = "unknown";
 
 	// String constants for info files
 	private static final String README = "readme";
@@ -78,7 +78,7 @@ public final class GitHubProjects {
 	 * @throws IOException
 	 *             if there's a problem calling the GitHub API.
 	 */
-	public final static User getUser(final GitHubClient ghClient,
+	public static User getUser(final GitHubClient ghClient,
 			final String login) throws IOException {
 		// Create the organisation info object from Git Hub information
 		UserService userService = new UserService(ghClient);
@@ -98,7 +98,7 @@ public final class GitHubProjects {
 	 * @throws IOException
 	 *             if there's a problem calling the GitHub API
 	 */
-	public final static Indicators getProjectIndicators(
+	public static Indicators getProjectIndicators(
 			final GitHubClient ghClient, final Repository repo)
 			throws IOException {
 		String readMeUrl = "", licenseUrl = "", metadataUrl = "";
@@ -109,17 +109,19 @@ public final class GitHubProjects {
 		String treeSha = tree.getSha();
 		tree = dataService.getTree(repo, treeSha);
 		for (TreeEntry treeEntry : tree.getTree()) {
-			if (!(treeEntry.getType().equals(TreeEntry.TYPE_BLOB)))
+			if (!(treeEntry.getType().equals(TreeEntry.TYPE_BLOB))) {
 				continue;
+			}
 			String baseName = FilenameUtils.getBaseName(treeEntry.getPath());
-			if (baseName.equalsIgnoreCase(README))
+			if (baseName.equalsIgnoreCase(README)) {
 				readMeUrl = repo.getHtmlUrl() + "#readme";
-			if (baseName.equalsIgnoreCase(LICENSE))
+			} else if (baseName.equalsIgnoreCase(LICENSE)) {
 				licenseUrl = repo.getHtmlUrl() + "/blob/master/"
 						+ treeEntry.getPath();
-			if (treeEntry.getPath().equalsIgnoreCase(OPF_YAML))
+			} else if (treeEntry.getPath().equalsIgnoreCase(OPF_YAML)) {
 				metadataUrl = repo.getHtmlUrl() + "/blob/master/"
 						+ treeEntry.getPath();
+			}
 		}
 		return Indicators.fromValues(readMeUrl, licenseUrl, metadataUrl);
 	}
@@ -134,7 +136,7 @@ public final class GitHubProjects {
 	 * @throws IOException
 	 *             if there's a problem calling the GitHub API
 	 */
-	public final static ProjectMetadata getMetadata(
+	public static ProjectMetadata getMetadata(
 			final GitHubClient ghClient, final Repository repo)
 			throws IOException {
 		ContentsService contentService = new ContentsService(ghClient);
@@ -160,7 +162,7 @@ public final class GitHubProjects {
 	 * 
 	 * @return the Travis CI Information for the project.
 	 */
-	public final static CiInfo getTravisInfo(final String ownerLogin,
+	public static CiInfo getTravisInfo(final String ownerLogin,
 			final String repoName) {
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getClasses().add(JacksonJsonProvider.class);
@@ -169,10 +171,10 @@ public final class GitHubProjects {
 				+ ownerLogin + "/" + repoName);
 		ClientResponse response = travisCall.accept(MediaType.APPLICATION_JSON)
 				.get(ClientResponse.class);
-		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND)
+		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND) {
 			return CiInfo.fromValues(false);
+		}
 		TravisRepo entity = response.getEntity(TravisRepo.class);
-		System.err.println("Travis:" + entity.toString()); 
 		return CiInfo.fromValues(entity.lastBuildId != 0);
 	}
 
@@ -187,18 +189,18 @@ public final class GitHubProjects {
 	 *         login string
 	 * @throws IOException
 	 */
-	public final static List<GitHubProject> createProjectList(
+	public static List<GitHubProject> createProjectList(
 			final GitHubClient ghClient, final String ghLogin)
 			throws IOException {
 		RepositoryService repoService = new RepositoryService(ghClient);
-		List<GitHubProject> projects = new ArrayList<GitHubProject>();
+		List<GitHubProject> projects = new ArrayList<>();
 		List<Repository> repos = repoService.getOrgRepositories(ghLogin);
 		for (Repository repo : repos) {
 			// Skip the private repos
-			if (repo.isPrivate())
+			if (repo.isPrivate()) {
 				continue;
+			}
 			ProjectMetadata metadata = getMetadata(ghClient, repo);
-			System.err.println(ghLogin + ":" + repo.getName());
 			Builder projBuilder = (new Builder(repo)).metadata(metadata)
 					.indicators(getProjectIndicators(ghClient, repo))
 					.ci(getTravisInfo(ghLogin, repo.getName()));
@@ -206,5 +208,4 @@ public final class GitHubProjects {
 		}
 		return projects;
 	}
-
 }
