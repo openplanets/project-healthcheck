@@ -10,15 +10,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 
 /**
- * TODO JavaDoc for TravisRepo.</p> TODO Tests for TravisRepo.</p> TODO
- * Implementation for TravisRepo.</p>
- * 
  * @author <a href="mailto:carl@openplanetsfoundation.org">Carl Wilson</a>.</p>
  *         <a href="https://github.com/carlwilson">carlwilson AT github</a>.</p>
  * @version 0.1
  * 
  *          Created 15 Jul 2013:17:02:37
  */
+// TODO JavaDoc for TravisRepo
+// TODO Tests for TravisRepo
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NON_PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class TravisRepo {
@@ -57,16 +56,8 @@ public final class TravisRepo {
 			@JsonProperty("last_build_status") final String lastBuildStatus,
 			@JsonProperty("last_build_result") final String lastBuildResult,
 			@JsonProperty("last_build_duration") final int lastBuildDuration) {
-<<<<<<< HEAD
 		return new TravisRepo(id, Strings.nullToEmpty(slug), lastBuildId, Strings.nullToEmpty(lastBuildStatus),
 				Strings.nullToEmpty(lastBuildResult), lastBuildDuration);
-=======
-		Strings.nullToEmpty(slug);
-		Strings.nullToEmpty(lastBuildStatus);
-		Strings.nullToEmpty(lastBuildResult);
-		return new TravisRepo(id, slug, lastBuildId, lastBuildStatus,
-				lastBuildResult, lastBuildDuration);
->>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
 	}
 
 	@Override

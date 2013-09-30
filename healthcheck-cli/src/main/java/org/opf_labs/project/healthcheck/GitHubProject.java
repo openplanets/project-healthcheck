@@ -81,7 +81,7 @@ public final class GitHubProject {
 	 * @return a new GitHub instance created from the param values
 	 */
 	@JsonCreator
-	private final static GitHubProject fromValues(
+	private static GitHubProject fromValues(
 			@JsonProperty("name") final String name,
 			@JsonProperty("description") final String description,
 			@JsonProperty("ownerLogin") final String ownerLogin,
@@ -393,7 +393,7 @@ public final class GitHubProject {
 		 * @return a new CiInfo instance from the param value
 		 */
 		@JsonCreator
-		public static final CiInfo fromValues(
+		public static CiInfo fromValues(
 				@JsonProperty("hasTravis") final boolean hasTravis) {
 			return new CiInfo(hasTravis);
 		}

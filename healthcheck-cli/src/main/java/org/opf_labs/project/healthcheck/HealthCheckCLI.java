@@ -100,7 +100,7 @@ public final class HealthCheckCLI {
 	 * 
 	 * @param args the command line args passed at invocation
 	 */
-	public final static void main(final String[] args) {
+	public static void main(final String[] args) {
 		// Create a command line parser
 		CommandLineParser cmdParser = new GnuParser();
 		// And a sysout writer
@@ -163,7 +163,7 @@ public final class HealthCheckCLI {
 		}
 	}
 
-	private final static GitHubClient createGitHubClient(final CommandLine cmd) {
+	private static GitHubClient createGitHubClient(final CommandLine cmd) {
 		GitHubClient client = new GitHubClient();
 		if (cmd.hasOption(USER_OPT)) {
 			String user = cmd.getOptionValue(USER_OPT);
@@ -176,12 +176,11 @@ public final class HealthCheckCLI {
 		return client;
 	}
 	
-	private final static String getOrgName(final CommandLine cmd) {
+	private static String getOrgName(final CommandLine cmd) {
 		return (cmd.hasOption(ORGANISATION_OPT)) ? cmd.getOptionValue(ORGANISATION_OPT) : DEFAULT_ORG_NAME;
 	}
 
-	private final static Writer getFileOutputWriter(String filePath) throws IOException {
-		System.out.println("Getting file writer.");
+	private static Writer getFileOutputWriter(String filePath) throws IOException {
 		File outFile = new File(filePath);
 		if (!outFile.exists()) {
 			if (!outFile.createNewFile()) throw new IOException();
@@ -189,7 +188,7 @@ public final class HealthCheckCLI {
 		return new FileWriter(outFile, false);
 	}
 	
-	private static final void outputHtml(final User user, final List<GitHubProject> projects, final Writer outWriter) {
+	private static void outputHtml(final User user, final List<GitHubProject> projects, final Writer outWriter) {
 		Configuration cfg = new Configuration();
 		cfg.setOutputEncoding("utf-8");
 		cfg.setClassForTemplateLoading(HealthCheckCLI.class, getTemplateDir());
@@ -220,7 +219,7 @@ public final class HealthCheckCLI {
 		}
 	}
 	
-	private final static void outputPlainText(final User user, final List<GitHubProject> projects, final Writer outWriter) throws IOException {
+	private static void outputPlainText(final User user, final List<GitHubProject> projects, final Writer outWriter) throws IOException {
 		outWriter.write(user.getName() + " Repositories");
 
 		int repoCount = 0;
@@ -231,7 +230,7 @@ public final class HealthCheckCLI {
 		}
 	}
 
-	private final static String getTemplateDir() {
+	private static String getTemplateDir() {
 		return "/" + HealthCheckCLI.class.getPackage().getName().replace(".", "/") + "/templates";
 	}
 }

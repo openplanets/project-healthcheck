@@ -136,12 +136,8 @@ public final class GitHubProjects {
 	 * @throws IOException
 	 *             if there's a problem calling the GitHub API
 	 */
-<<<<<<< HEAD
 	public static ProjectMetadata getMetadata(
-=======
-	public final static ProjectMetadata getMetadata(
->>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
-			final GitHubClient ghClient, final Repository repo)
+			GitHubClient ghClient, final Repository repo)
 			throws IOException {
 		ContentsService contentService = new ContentsService(ghClient);
 		try {
@@ -166,11 +162,7 @@ public final class GitHubProjects {
 	 * 
 	 * @return the Travis CI Information for the project.
 	 */
-<<<<<<< HEAD
 	public static CiInfo getTravisInfo(final String ownerLogin,
-=======
-	public final static CiInfo getTravisInfo(final String ownerLogin,
->>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
 			final String repoName) {
 		ClientConfig cc = new DefaultClientConfig();
 		cc.getClasses().add(JacksonJsonProvider.class);
@@ -181,13 +173,8 @@ public final class GitHubProjects {
 				.get(ClientResponse.class);
 		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND) {
 			return CiInfo.fromValues(false);
-<<<<<<< HEAD
 		}
 		TravisRepo entity = response.getEntity(TravisRepo.class);
-=======
-		TravisRepo entity = response.getEntity(TravisRepo.class);
-		System.err.println("Travis:" + entity.toString()); 
->>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
 		return CiInfo.fromValues(entity.lastBuildId != 0);
 	}
 
@@ -212,13 +199,8 @@ public final class GitHubProjects {
 			// Skip the private repos
 			if (repo.isPrivate()) {
 				continue;
-<<<<<<< HEAD
 			}
 			ProjectMetadata metadata = getMetadata(ghClient, repo);
-=======
-			ProjectMetadata metadata = getMetadata(ghClient, repo);
-			System.err.println(ghLogin + ":" + repo.getName());
->>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
 			Builder projBuilder = (new Builder(repo)).metadata(metadata)
 					.indicators(getProjectIndicators(ghClient, repo))
 					.ci(getTravisInfo(ghLogin, repo.getName()));
