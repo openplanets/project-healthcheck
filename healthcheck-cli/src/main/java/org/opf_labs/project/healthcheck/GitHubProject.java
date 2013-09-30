@@ -81,7 +81,7 @@ public final class GitHubProject {
 	 * @return a new GitHub instance created from the param values
 	 */
 	@JsonCreator
-	private static GitHubProject fromValues(
+	public static GitHubProject fromValues(
 			@JsonProperty("name") final String name,
 			@JsonProperty("description") final String description,
 			@JsonProperty("ownerLogin") final String ownerLogin,
@@ -127,7 +127,7 @@ public final class GitHubProject {
 	 *          Created 11 Jul 2013:10:12:45
 	 */
 	@SuppressWarnings("hiding") 
-	static public final class Builder {
+	public static final class Builder {
 		private String name = GitHubProjects.UNKNOWN;
 		private String description = GitHubProjects.UNKNOWN;
 		private String ownerLogin = GitHubProjects.UNKNOWN;
