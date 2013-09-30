@@ -6,6 +6,8 @@ package org.opf_labs.project.healthcheck;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +36,7 @@ public final class ProjectMetadata {
 	private final static String OPF_FULL = "Open Planets Foundation";
 	private final static String OPF = "OPF";
 	private final static ProjectMetadata DEFAULT_INSTANCE = new ProjectMetadata(GitHubProjects.UNKNOWN, GitHubProjects.UNKNOWN);
+	private final static Logger LOGGER = Logger.getLogger(ProjectMetadata.class); 
 	/** The projects full name */
 	public final String name;
 	/** The projects vendor identifier, could be an individual, organisation, or project. */
@@ -89,10 +92,13 @@ public final class ProjectMetadata {
 		try {
 			pmd = mapper.readValue(yamlStream, ProjectMetadata.class);
 		} catch (JsonParseException | JsonMappingException excep) {
+			LOGGER.warn("Jackson JSON parsing error parsing metadata from Travis YAML stream");
 			throw new IllegalArgumentException("Problem parsing project metadata from YAML stream.", excep);
 		} catch (IOException excep) {
 			// TODO Auto-generated catch block
-			excep.printStackTrace();
+			LOGGER.warn("I/O error reading YAML Stream from Travis.");
+			LOGGER.warn(excep.getMessage());
+			LOGGER.warn(excep.getStackTrace());
 		}
 		return pmd;
 	}
@@ -111,10 +117,13 @@ public final class ProjectMetadata {
 		try {
 			pmd = mapper.readValue(yaml.replaceAll("\t", "  "), ProjectMetadata.class);
 		} catch (JsonParseException | JsonMappingException excep) {
+			LOGGER.warn("Jackson JSON parsing error parsing metadata from Travis YAML stream");
 			throw new IllegalArgumentException("Problem parsing project metadata from YAML stream.", excep);
 		} catch (IOException excep) {
 			// TODO Auto-generated catch block
-			excep.printStackTrace();
+			LOGGER.warn("I/O error reading YAML Stream from Travis.");
+			LOGGER.warn(excep.getMessage());
+			LOGGER.warn(excep.getStackTrace());
 		}
 		return pmd;
 	}
