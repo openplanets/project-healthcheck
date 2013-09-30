@@ -23,6 +23,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 
@@ -69,13 +71,14 @@ public final class HealthCheckCLI {
 	
 	// Default org name is openplanets
 	private static final String DEFAULT_ORG_NAME = "openplanets";
+	
+	private static final Logger LOGGER = Logger.getLogger(HealthCheckCLI.class);
 
 	// Create the options object
 	private static final Options OPTIONS = new Options();
 	static {
 		Option help = new Option(HELP_OPT, HELP_OPT_DESC);
 		Option html = new Option(HTML_OPT, HTML_OPT_DESC);
-		@SuppressWarnings("static-access")
 		Option file = OptionBuilder.withArgName(FILE_OPT_ARG).hasArg()
 				.withDescription(FILE_OPT_DESC).create(FILE_OPT);
 		@SuppressWarnings("static-access")
@@ -101,6 +104,7 @@ public final class HealthCheckCLI {
 	 * @param args the command line args passed at invocation
 	 */
 	public static void main(final String[] args) {
+		BasicConfigurator.configure();
 		// Create a command line parser
 		CommandLineParser cmdParser = new GnuParser();
 		// And a sysout writer
@@ -132,29 +136,25 @@ public final class HealthCheckCLI {
 			}
 			outWriter.close();
 		} catch (ParseException e) {
-			// Ooops, parsing commands went wrong
-			e.printStackTrace();
-			System.err.println("Command parsing failed.  Reason: "
-					+ e.getMessage());
-			System.exit(1);
+			LOGGER.fatal("There was a problem parsing the command line arguments.");
+			logFatalExceptionAndExit(e);
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.err.println("Failed to retrieve organisation from GitHub.  Reason: "
-					+ e.getMessage());
-			System.exit(1);
+			logFatalExceptionAndExit(e);
 		} finally {
 			try {
-				if (outWriter != null) outWriter.close();
+				if (outWriter != null) {
+					outWriter.close();
+				}
 			} catch (IOException excep) {
 				/**
 				 * Empty catch block, we can ignore the close error
 				 */
-				excep.printStackTrace();
+				LOGGER.warn(excep.getMessage());
 			}
 		}
 	}
 
-	private final static void outputHelp(final CommandLine cmd) {
+	private static void outputHelp(final CommandLine cmd) {
 		// Check for help option
 		if (cmd.hasOption(HELP_OPT)) {
 			// OK help found
@@ -183,8 +183,12 @@ public final class HealthCheckCLI {
 	private static Writer getFileOutputWriter(String filePath) throws IOException {
 		File outFile = new File(filePath);
 		if (!outFile.exists()) {
-			if (!outFile.createNewFile()) throw new IOException();
-		} else if (!outFile.isFile()) throw new IOException();
+			if (!outFile.createNewFile()) {
+				throw new IOException();
+			}
+		} else if (!outFile.isFile()) {
+			throw new IOException();
+		}
 		return new FileWriter(outFile, false);
 	}
 	
@@ -232,5 +236,13 @@ public final class HealthCheckCLI {
 
 	private static String getTemplateDir() {
 		return "/" + HealthCheckCLI.class.getPackage().getName().replace(".", "/") + "/templates";
+	}
+
+	private static void logFatalExceptionAndExit(final Exception excep) {
+		LOGGER.fatal("Exception Stack Trace:");
+		LOGGER.fatal(excep.getStackTrace());
+		LOGGER.fatal("Exception Message:");
+		LOGGER.fatal(excep.getMessage());
+		System.exit(1);
 	}
 }
