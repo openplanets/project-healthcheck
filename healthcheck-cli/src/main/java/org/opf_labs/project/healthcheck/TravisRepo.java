@@ -57,8 +57,16 @@ public final class TravisRepo {
 			@JsonProperty("last_build_status") final String lastBuildStatus,
 			@JsonProperty("last_build_result") final String lastBuildResult,
 			@JsonProperty("last_build_duration") final int lastBuildDuration) {
+<<<<<<< HEAD
 		return new TravisRepo(id, Strings.nullToEmpty(slug), lastBuildId, Strings.nullToEmpty(lastBuildStatus),
 				Strings.nullToEmpty(lastBuildResult), lastBuildDuration);
+=======
+		Strings.nullToEmpty(slug);
+		Strings.nullToEmpty(lastBuildStatus);
+		Strings.nullToEmpty(lastBuildResult);
+		return new TravisRepo(id, slug, lastBuildId, lastBuildStatus,
+				lastBuildResult, lastBuildDuration);
+>>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
 	}
 
 	@Override
