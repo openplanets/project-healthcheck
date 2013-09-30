@@ -97,6 +97,10 @@ public final class HealthCheckCLI {
 		OPTIONS.addOption(password);
 		OPTIONS.addOption(user);
 	}
+	
+	private HealthCheckCLI() {
+		throw new AssertionError("Should never enter HealthCheckCLI default constructor.");
+	}
 
 	/**
 	 * Main CLI entry point, process command line arguments
@@ -214,12 +218,10 @@ public final class HealthCheckCLI {
 			templateData.put("projectsJson", joiner.join(projectsJson));
 			templateData.put("vendors", vendors);
 			indexTemplate.process(templateData, outWriter);
-		} catch (IOException e) {
+		} catch (TemplateException | IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.warn(e.getMessage());
+			LOGGER.warn(e.getStackTrace());
 		}
 	}
 	
