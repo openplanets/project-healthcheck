@@ -58,7 +58,7 @@ public final class ProjectMetadata {
 	 * @return a populated project metadata instance
 	 */
 	@JsonCreator
-	public static final ProjectMetadata fromValues(@JsonProperty("name") final String name,
+	public static ProjectMetadata fromValues(@JsonProperty("name") final String name,
 			@JsonProperty("vendor") final String vendor) {
 		Preconditions.checkNotNull(name, "name is null.");
 		Preconditions.checkNotNull(vendor, "vendor is null.");
@@ -71,7 +71,7 @@ public final class ProjectMetadata {
 	/**
 	 * @return a default instance, can be used for testing
 	 */
-	public static final ProjectMetadata defaultInstance() {
+	public static ProjectMetadata defaultInstance() {
 		return DEFAULT_INSTANCE;
 	}
 	/**
@@ -82,7 +82,7 @@ public final class ProjectMetadata {
 	 *            an java.io.InputStream of YAML metadata
 	 * @return a populated project metadata instance
 	 */
-	public static final ProjectMetadata fromYamlStream(InputStream yamlStream) {
+	public static ProjectMetadata fromYamlStream(InputStream yamlStream) {
 		Preconditions.checkNotNull(yamlStream, "yamlStream is null");
 		ProjectMetadata pmd = null;
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -103,7 +103,7 @@ public final class ProjectMetadata {
 	 * @param yaml a YAML string representation of the project metadata
 	 * @return a populated project metadata instance
 	 */
-	public final static ProjectMetadata fromYamlString(String yaml) {
+	public static ProjectMetadata fromYamlString(String yaml) {
 		Preconditions.checkNotNull(yaml, "yaml == null");
 		Preconditions.checkArgument(!yaml.isEmpty(), "yaml.isEmpty() == true");
 		ProjectMetadata pmd = null;
