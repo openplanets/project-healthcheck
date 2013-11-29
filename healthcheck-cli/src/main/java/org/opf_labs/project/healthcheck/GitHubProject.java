@@ -126,7 +126,6 @@ public final class GitHubProject {
 	 * 
 	 *          Created 11 Jul 2013:10:12:45
 	 */
-	@SuppressWarnings("hiding") 
 	public static final class Builder {
 		private String name = GitHubProjects.UNKNOWN;
 		private String description = GitHubProjects.UNKNOWN;
