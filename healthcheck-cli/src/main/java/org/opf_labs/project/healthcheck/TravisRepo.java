@@ -50,7 +50,7 @@ public final class TravisRepo {
 	 * @return a TravisRepo object created from the values
 	 */
 	@JsonCreator
-	public static final TravisRepo fromValues(@JsonProperty("id") final int id,
+	public static TravisRepo fromValues(@JsonProperty("id") final int id,
 			@JsonProperty("slug") final String slug,
 			@JsonProperty("last_build_id") final int lastBuildId,
 			@JsonProperty("last_build_status") final String lastBuildStatus,
