@@ -79,6 +79,7 @@ public final class HealthCheckCLI {
 	static {
 		Option help = new Option(HELP_OPT, HELP_OPT_DESC);
 		Option html = new Option(HTML_OPT, HTML_OPT_DESC);
+		@SuppressWarnings("static-access")
 		Option file = OptionBuilder.withArgName(FILE_OPT_ARG).hasArg()
 				.withDescription(FILE_OPT_DESC).create(FILE_OPT);
 		@SuppressWarnings("static-access")
@@ -124,14 +125,17 @@ public final class HealthCheckCLI {
 			GitHubClient ghClient = createGitHubClient(cmd);
 			
 			// Now the organisation name
+			LOGGER.info("Getting GitHub user");
 			User user = GitHubProjects.getUser(ghClient, getOrgName(cmd));
 			
+			LOGGER.info("Testing output flag");
 			// Get a file writer if requested
 			if (cmd.hasOption(FILE_OPT)) {
-				outWriter.close();
+				LOGGER.info("Getting file writer");
 				outWriter = getFileOutputWriter(cmd.getOptionValue(FILE_OPT));
 			}
 
+			LOGGER.info("Getting project list");
 			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
 			if (cmd.hasOption(HTML_OPT)) {
 				outputHtml(user, projects, outWriter);
@@ -140,9 +144,10 @@ public final class HealthCheckCLI {
 			}
 			outWriter.close();
 		} catch (ParseException e) {
-			LOGGER.fatal("There was a problem parsing the command line arguments.");
+			LOGGER.info("There was a problem parsing the command line arguments.");
 			logFatalExceptionAndExit(e);
 		} catch (IOException e) {
+			LOGGER.info("There was a problem with the output writer.");
 			logFatalExceptionAndExit(e);
 		} finally {
 			try {
