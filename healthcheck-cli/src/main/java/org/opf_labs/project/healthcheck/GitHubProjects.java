@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryContents;
@@ -62,6 +63,9 @@ public final class GitHubProjects {
 	// String constants for Travis
 	private static final String TRAVIS_ROOT = "https://api.travis-ci.org/";
 	private static final String TRAVIS_REPO_ROOT = TRAVIS_ROOT + "repos/";
+	
+	private static final Logger LOGGER = Logger.getLogger(GitHubProjects.class);
+
 	private GitHubProjects() {
 		throw new AssertionError("In GitHubProjects constructor.");
 	}
@@ -172,9 +176,11 @@ public final class GitHubProjects {
 		ClientResponse response = travisCall.accept(MediaType.APPLICATION_JSON)
 				.get(ClientResponse.class);
 		if (response.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND) {
+			LOGGER.info("Not Travis-CI build for repo " + repoName);
 			return CiInfo.fromValues(false);
 		}
 		TravisRepo entity = response.getEntity(TravisRepo.class);
+		LOGGER.info("Last build for repo " + repoName + " id " + entity.lastBuildId);
 		return CiInfo.fromValues(entity.lastBuildId != 0);
 	}
 
@@ -198,8 +204,10 @@ public final class GitHubProjects {
 		for (Repository repo : repos) {
 			// Skip the private repos
 			if (repo.isPrivate()) {
+				LOGGER.info("Skipping private repository " + repo.getName());
 				continue;
 			}
+			LOGGER.info("Getting metadata for repo: " + repo.getName());
 			ProjectMetadata metadata = getMetadata(ghClient, repo);
 			Builder projBuilder = (new Builder(repo)).metadata(metadata)
 					.indicators(getProjectIndicators(ghClient, repo))
