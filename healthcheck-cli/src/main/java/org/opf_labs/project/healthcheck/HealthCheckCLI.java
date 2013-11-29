@@ -79,6 +79,7 @@ public final class HealthCheckCLI {
 	static {
 		Option help = new Option(HELP_OPT, HELP_OPT_DESC);
 		Option html = new Option(HTML_OPT, HTML_OPT_DESC);
+		@SuppressWarnings("static-access")
 		Option file = OptionBuilder.withArgName(FILE_OPT_ARG).hasArg()
 				.withDescription(FILE_OPT_DESC).create(FILE_OPT);
 		@SuppressWarnings("static-access")
@@ -111,14 +112,17 @@ public final class HealthCheckCLI {
 		BasicConfigurator.configure();
 		// Create a command line parser
 		CommandLineParser cmdParser = new GnuParser();
-		// And a sysout writer
-		Writer outWriter = new OutputStreamWriter(System.out);
+		Writer outWriter = null; 
 		try {
 			// Parse the command line arguments
 			CommandLine cmd = cmdParser.parse(OPTIONS, args);
 
 			// Print help if asked, will terminate if no other option
-			outputHelp(cmd);
+			if (cmd.hasOption(HELP_OPT)) {
+				// OK help found
+				outputHelp(cmd);
+				System.exit(0);
+			}
 
 			// Parsed OK so let's get GitHub Client
 			GitHubClient ghClient = createGitHubClient(cmd);
@@ -126,13 +130,17 @@ public final class HealthCheckCLI {
 			// Now the organisation name
 			User user = GitHubProjects.getUser(ghClient, getOrgName(cmd));
 			
+			LOGGER.info("Reading project data for GitHub user " + user.getName());
+			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
+			LOGGER.info("Creating Output writer");
+
 			// Get a file writer if requested
 			if (cmd.hasOption(FILE_OPT)) {
-				outWriter.close();
 				outWriter = getFileOutputWriter(cmd.getOptionValue(FILE_OPT));
+			} else {
+				outWriter = new OutputStreamWriter(System.out);
 			}
 
-			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
 			if (cmd.hasOption(HTML_OPT)) {
 				outputHtml(user, projects, outWriter);
 			} else {
@@ -159,18 +167,15 @@ public final class HealthCheckCLI {
 	}
 
 	private static void outputHelp(final CommandLine cmd) {
-		// Check for help option
-		if (cmd.hasOption(HELP_OPT)) {
-			// OK help found
-			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("proj-heath", OPTIONS);
-		}
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("proj-heath", OPTIONS);
 	}
 
 	private static GitHubClient createGitHubClient(final CommandLine cmd) {
 		GitHubClient client = new GitHubClient();
 		if (cmd.hasOption(USER_OPT)) {
 			String user = cmd.getOptionValue(USER_OPT);
+			LOGGER.info("User:" + user);
 			if (cmd.hasOption(PASSWORD_OPT)) {
 				String password = cmd.getOptionValue(PASSWORD_OPT);
 				client.setCredentials(user, password);
@@ -242,7 +247,7 @@ public final class HealthCheckCLI {
 
 	private static void logFatalExceptionAndExit(final Exception excep) {
 		LOGGER.fatal("Exception Stack Trace:");
-		LOGGER.fatal(excep.getStackTrace());
+		LOGGER.fatal(excep);
 		LOGGER.fatal("Exception Message:");
 		LOGGER.fatal(excep.getMessage());
 		System.exit(1);
