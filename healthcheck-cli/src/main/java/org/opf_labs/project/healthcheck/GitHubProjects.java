@@ -60,8 +60,6 @@ public final class GitHubProjects {
 	private static final String LICENSE = "license";
 	private static final String OPF_YAML = ".opf.yml";
 
-	private static final Logger LOGGER = Logger.getLogger(GitHubProjects.class);
-
 	// String constants for Travis
 	private static final String TRAVIS_ROOT = "https://api.travis-ci.org/";
 	private static final String TRAVIS_REPO_ROOT = TRAVIS_ROOT + "repos/";

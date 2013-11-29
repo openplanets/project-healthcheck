@@ -132,9 +132,8 @@ public final class HealthCheckCLI {
 			User user = GitHubProjects.getUser(ghClient, getOrgName(cmd));
 			
 			LOGGER.info("Reading project data for GitHub user " + user.getName());
-			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
-			LOGGER.info("Creating Output writer");
 
+			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
 			// Get a file writer if requested
 			if (cmd.hasOption(FILE_OPT)) {
 				outWriter = getFileOutputWriter(cmd.getOptionValue(FILE_OPT));
@@ -142,8 +141,6 @@ public final class HealthCheckCLI {
 				outWriter = new OutputStreamWriter(System.out);
 			}
 
-			LOGGER.info("Getting project list");
-			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
 			if (cmd.hasOption(HTML_OPT)) {
 				outputHtml(user, projects, outWriter);
 			} else {
