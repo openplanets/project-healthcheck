@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryCommit;
 import org.eclipse.egit.github.core.RepositoryContents;
@@ -58,6 +59,8 @@ public final class GitHubProjects {
 	private static final String README = "readme";
 	private static final String LICENSE = "license";
 	private static final String OPF_YAML = ".opf.yml";
+
+	private static final Logger LOGGER = Logger.getLogger(GitHubProjects.class);
 
 	// String constants for Travis
 	private static final String TRAVIS_ROOT = "https://api.travis-ci.org/";
@@ -196,6 +199,7 @@ public final class GitHubProjects {
 		List<GitHubProject> projects = new ArrayList<>();
 		List<Repository> repos = repoService.getOrgRepositories(ghLogin);
 		for (Repository repo : repos) {
+			LOGGER.debug(repo.getName());
 			// Skip the private repos
 			if (repo.isPrivate()) {
 				continue;
