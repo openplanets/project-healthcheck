@@ -60,6 +60,8 @@ public final class GitHubProjects {
 	private static final String LICENSE = "license";
 	private static final String OPF_YAML = ".opf.yml";
 
+	private static final Logger LOGGER = Logger.getLogger(GitHubProjects.class);
+
 	// String constants for Travis
 	private static final String TRAVIS_ROOT = "https://api.travis-ci.org/";
 	private static final String TRAVIS_REPO_ROOT = TRAVIS_ROOT + "repos/";
@@ -202,6 +204,7 @@ public final class GitHubProjects {
 		List<GitHubProject> projects = new ArrayList<>();
 		List<Repository> repos = repoService.getOrgRepositories(ghLogin);
 		for (Repository repo : repos) {
+			LOGGER.debug(repo.getName());
 			// Skip the private repos
 			if (repo.isPrivate()) {
 				LOGGER.info("Skipping private repository " + repo.getName());

@@ -128,6 +128,7 @@ public final class HealthCheckCLI {
 			GitHubClient ghClient = createGitHubClient(cmd);
 			
 			// Now the organisation name
+			LOGGER.info("Getting GitHub user");
 			User user = GitHubProjects.getUser(ghClient, getOrgName(cmd));
 			
 			LOGGER.info("Reading project data for GitHub user " + user.getName());
@@ -141,6 +142,8 @@ public final class HealthCheckCLI {
 				outWriter = new OutputStreamWriter(System.out);
 			}
 
+			LOGGER.info("Getting project list");
+			List<GitHubProject> projects = GitHubProjects.createProjectList(ghClient, user.getLogin());
 			if (cmd.hasOption(HTML_OPT)) {
 				outputHtml(user, projects, outWriter);
 			} else {
@@ -148,9 +151,10 @@ public final class HealthCheckCLI {
 			}
 			outWriter.close();
 		} catch (ParseException e) {
-			LOGGER.fatal("There was a problem parsing the command line arguments.");
+			LOGGER.info("There was a problem parsing the command line arguments.");
 			logFatalExceptionAndExit(e);
 		} catch (IOException e) {
+			LOGGER.info("There was a problem with the output writer.");
 			logFatalExceptionAndExit(e);
 		} finally {
 			try {

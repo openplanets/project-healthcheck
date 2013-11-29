@@ -79,11 +79,11 @@ public class ProjectMetadataTest {
 	public void testGetInstanceInputStream() throws URISyntaxException,
 			IOException {
 		File testYaml = AllTests.getTestYamlFile();
-		InputStream fis = new FileInputStream(testYaml);
-		ProjectMetadata pmd = ProjectMetadata.fromYamlStream(fis);
-		assertEquals("OPF Project Healthcheck", pmd.name);
-		assertEquals("OPF", pmd.vendor);
-		fis.close();
+		try (InputStream fis = new FileInputStream(testYaml)) {
+			ProjectMetadata pmd = ProjectMetadata.fromYamlStream(fis);
+			assertEquals("OPF Project Healthcheck", pmd.name);
+			assertEquals("OPF", pmd.vendor);
+		}
 	}
 
 	/**
@@ -98,8 +98,8 @@ public class ProjectMetadataTest {
 	public void testGetInstanceInputStreamIncomplete() throws URISyntaxException,
 			IOException {
 		File testYaml = AllTests.getTestIncompleteYamlFile();
-		InputStream fis = new FileInputStream(testYaml);
-		ProjectMetadata.fromYamlStream(fis);
-		fis.close();
+		try (InputStream fis = new FileInputStream(testYaml)) {
+			ProjectMetadata.fromYamlStream(fis);
+		}
 	}
 }
