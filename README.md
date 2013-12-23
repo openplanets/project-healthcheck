@@ -15,7 +15,7 @@ configuration, a sysadmin task.
 
 Status
 ------
-A new project so no working code yet.
+OPF Jenkins Build Status[![Build Status](http://jenkins.opf-labs.org/job/project-healthcheck/badge/icon)](http://jenkins.opf-labs.org/job/project-healthcheck/)
 
 ToDo
 ----
