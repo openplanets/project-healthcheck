@@ -221,13 +221,7 @@ var projectList = {
      *            the JavaScript date object to format
      */
     formatDate : function (date) {
-<<<<<<< HEAD
-        var month = date.getMonth().toString();
-        var day = date.getDate().toString();
-        return date.getFullYear() + "-" + projectList.pad(date.getMonth(), 2) +
-=======
         return date.getFullYear() + "-" + projectList.pad(date.getMonth() + 1, 2) +
->>>>>>> f8fa3a9471976262151a1f57b2fbbb2b11ca97f0
             "-" + projectList.pad(date.getDate(), 2);
     },
     /**
