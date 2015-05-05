@@ -10,14 +10,14 @@
 	<developers>
 		<developer>
 			<name>Carl Wilson</name>
-			<email>carl@openplanetsfoundation.org</email>
-			<organization>The Open Planets Foundation</organization>
+			<email>carl@openpreservation.org</email>
+			<organization>The Open Preservation Foundation</organization>
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:git@github.com:openplanets/project-healthcheck.git</connection>
-		<developerConnection>scm:git:git@github.com:openplanets/project-healthcheck.git</developerConnection>
-		<url>git@github.com:openplanets/project-healthcheck.git</url>
+		<connection>scm:git:git@github.com:openpreservation/project-healthcheck.git</connection>
+		<developerConnection>scm:git:git@github.com:openpreservation/project-healthcheck.git</developerConnection>
+		<url>git@github.com:openpreservation/project-healthcheck.git</url>
 	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -158,7 +158,7 @@
 				<site>
 					<id>opf.jenkins.local.site</id>
 					<name>OPF Projects Website</name>
-					<url>file:///var/www/projects/opf/project-healthcheck</url>
+					<url>file:///var/www/projects.opf-labs.org/opf/project-healthcheck</url>
 				</site>
 			</distributionManagement>
 		</profile>
